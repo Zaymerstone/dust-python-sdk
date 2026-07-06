@@ -1,0 +1,23 @@
+# Секреты
+.env
+
+# Виртуальное окружение
+venv/
+.venv/
+env/
+
+# Python кэш и байткод
+__pycache__/
+*.pyc
+
+# Сборка пакета (появляется после pip install -e .)
+*.egg-info/
+build/
+dist/
+
+# pytest кэш
+.pytest_cache/
+
+# IDE (на случай, если используешь VSCode/PyCharm)
+.vscode/
+.idea/

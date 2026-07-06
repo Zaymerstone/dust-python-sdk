@@ -1,0 +1,29 @@
+{
+  "conversation": {
+    "id": 1,
+    "sId": "conv-fake-123",
+    "created": 1735689600000,
+    "title": null,
+    "visibility": "unlisted",
+    "content": [
+      [
+        {
+          "id": 1,
+          "sId": "msg-user-1",
+          "type": "user_message",
+          "content": "Привет! Расскажи в двух словах, что ты умеешь.",
+          "context": { "timezone": "UTC", "username": "sdk-user" }
+        }
+      ],
+      [
+        {
+          "id": 2,
+          "sId": "msg-agent-1",
+          "type": "agent_message",
+          "status": "succeeded",
+          "content": "Привет! Я помогаю искать и анализировать данные компании, работать с интернетом и создавать контент."
+        }
+      ]
+    ]
+  }
+}
