@@ -105,3 +105,22 @@ def test_get_agent_returns_single_agent():
 
     assert agent["sId"] == "claude-5-sonnet"
     assert agent["model"]["providerId"] == "anthropic"
+    
+def test_get_tables_returns_table_list():
+    fixture = load_fixture("tables_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/spaces/fake-space/data_sources/fake-ds/tables",
+            json=fixture,
+        )
+        tables = client.get_tables(space_id="fake-space", data_source_id="fake-ds")
+
+    assert len(tables) == 1
+    assert tables[0]["title"] == "ROI Data"

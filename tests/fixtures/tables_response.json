@@ -1,0 +1,15 @@
+[
+  {
+    "title": "ROI Data",
+    "table_id": "1234f4567c",
+    "description": "roi data for Q1",
+    "mime_type": "text/csv",
+    "schema": [
+      { "name": "roi", "value_type": "int", "possible_values": ["1", "2", "3"] }
+    ],
+    "timestamp": 1732810375150,
+    "tags": ["string"],
+    "parent_id": "1234f4567c",
+    "parents": ["1234f4567c"]
+  }
+]
