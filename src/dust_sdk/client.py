@@ -91,3 +91,14 @@ class DustClient:
             if latest_version.get("type") == "agent_message":
                 return latest_version.get("content")
         return None
+    def list_spaces(self) -> list[dict]:
+        """Возвращает список spaces (пространств) в workspace."""
+        url = f"{self.base_url}/api/v1/w/{self.workspace_id}/spaces"
+        response = requests.get(url, headers=self._headers())
+
+        if response.status_code != 200:
+            raise DustAPIError(
+                f"Dust API вернул {response.status_code}: {response.text}"
+            )
+
+        return response.json()["spaces"]

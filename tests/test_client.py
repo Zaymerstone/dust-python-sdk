@@ -49,3 +49,22 @@ def test_create_conversation_returns_agent_answer():
     answer = client.get_last_agent_message_text(conversation)
     assert answer is not None
     assert "помогаю" in answer
+    
+def test_list_spaces_returns_spaces():
+    fixture = load_fixture("spaces_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/spaces",
+            json=fixture,
+        )
+        spaces = client.list_spaces()
+
+    assert len(spaces) == 1
+    assert spaces[0]["name"] == "Company Data"
