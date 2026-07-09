@@ -2,18 +2,19 @@ import requests
 
 
 class DustAPIError(Exception):
-    """Базовое исключение для всех ошибок Dust API."""
+    """Base exception for all Dust API errors."""
     pass
 
 
 class DustClient:
     def __init__(self, api_key: str, workspace_id: str, base_url: str):
         """
-        base_url обязателен и не имеет дефолта специально:
-        у Dust есть отдельные регионы (например https://eu.dust.tt
-        и https://dust.tt), и подстановка неверного региона даёт
-        непонятную ошибку 'invalid_api_key_error', а не 'wrong region'.
-        Так что заставляем пользователя SDK явно его указать.
+        base_url is required with no default on purpose: Dust hosts
+        separate regional infrastructure (e.g. https://eu.dust.tt
+        and https://dust.tt), and passing the wrong region produces
+        a confusing 'invalid_api_key_error' rather than a
+        'wrong region' error. So we force the SDK user to specify
+        it explicitly.
         """
         self.api_key = api_key
         self.workspace_id = workspace_id
@@ -27,19 +28,19 @@ class DustClient:
 
     def _handle_response(self, response: requests.Response) -> dict:
         """
-        Общая обработка ответа для всех методов: проверка статуса
-        и парсинг JSON. Вынесено сюда после того, как эта же проверка
-        стала дублироваться в 4 разных методах подряд (list_agents,
+        Shared response handling for all methods: status check and
+        JSON parsing. Extracted here after this same check started
+        being duplicated across 4 methods in a row (list_agents,
         create_conversation, list_spaces, list_data_sources).
         """
         if response.status_code != 200:
             raise DustAPIError(
-                f"Dust API вернул {response.status_code}: {response.text}"
+                f"Dust API returned {response.status_code}: {response.text}"
             )
         return response.json()
 
     def list_agents(self) -> list[dict]:
-        """Возвращает список agent configurations в workspace."""
+        """Returns the list of agent configurations in the workspace."""
         url = f"{self.base_url}/api/v1/w/{self.workspace_id}/assistant/agent_configurations"
         response = requests.get(url, headers=self._headers())
         return self._handle_response(response)["agentConfigurations"]
@@ -53,9 +54,9 @@ class DustClient:
         blocking: bool = True,
     ) -> dict:
         """
-        Создаёт разговор и отправляет первое сообщение агенту.
-        Схема ответа подтверждена на живых данных 09.07.2026
-        (см. NOTES.md)
+        Creates a conversation and sends the first message to an agent.
+        Response schema confirmed against live data on 2026-07-09
+        (see NOTES.md).
         """
         url = f"{self.base_url}/api/v1/w/{self.workspace_id}/assistant/conversations"
 
@@ -77,11 +78,11 @@ class DustClient:
     @staticmethod
     def get_last_agent_message_text(conversation: dict) -> str | None:
         """
-        Извлекает текст последнего сообщения агента.
-        conversation['content'] — двумерный массив content[rank][version]:
-        rank = позиция сообщения в разговоре, version = версия (правки).
-        Мы берём последнюю версию на каждом ранге и ищем последнее
-        сообщение типа agent_message.
+        Extracts the text of the last agent message.
+        conversation['content'] is a 2D array content[rank][version]:
+        rank = the message's position in the conversation, version =
+        edit/revision at that position. We take the latest version at
+        each rank and look for the last message of type agent_message.
         """
         for rank_group in reversed(conversation["content"]):
             latest_version = rank_group[-1]
@@ -90,32 +91,32 @@ class DustClient:
         return None
 
     def list_spaces(self) -> list[dict]:
-        """Возвращает список spaces (пространств) в workspace."""
+        """Returns the list of spaces in the workspace."""
         url = f"{self.base_url}/api/v1/w/{self.workspace_id}/spaces"
         response = requests.get(url, headers=self._headers())
         return self._handle_response(response)["spaces"]
 
     def list_data_sources(self, space_id: str) -> list[dict]:
-        """Возвращает список data sources в указанном space."""
+        """Returns the list of data sources in the given space."""
         url = f"{self.base_url}/api/v1/w/{self.workspace_id}/spaces/{space_id}/data_sources"
         response = requests.get(url, headers=self._headers())
         return self._handle_response(response)["data_sources"]
-    
+
     def get_agent(self, agent_sid: str) -> dict:
-        """Возвращает конфигурацию одного агента по его sId."""
+        """Returns a single agent's configuration by its sId."""
         url = f"{self.base_url}/api/v1/w/{self.workspace_id}/assistant/agent_configurations/{agent_sid}"
         response = requests.get(url, headers=self._headers())
         return self._handle_response(response)["agentConfiguration"]
-    
+
     def get_tables(self, space_id: str, data_source_id: str) -> list[dict]:
         """
-        Возвращает список таблиц в указанном data source.
+        Returns the list of tables in the given data source.
 
-        Обрати внимание: в отличие от остальных методов, этот эндпоинт
-        возвращает голый JSON-массив ([...]), а не объект-обёртку
-        (например {"data_sources": [...]}). Поэтому тут нельзя
-        использовать _handle_response() как есть — она предполагает,
-        что response.json() это dict, а тут будет list.
+        Note: unlike the other methods, this endpoint returns a bare
+        JSON array ([...]) rather than a wrapper object (e.g.
+        {"data_sources": [...]}). Because of that, _handle_response()
+        can't be used as-is here — it assumes response.json() is a
+        dict, but here it's a list.
         """
         url = (
             f"{self.base_url}/api/v1/w/{self.workspace_id}"
@@ -125,29 +126,29 @@ class DustClient:
 
         if response.status_code != 200:
             raise DustAPIError(
-                f"Dust API вернул {response.status_code}: {response.text}"
+                f"Dust API returned {response.status_code}: {response.text}"
             )
 
         return response.json()
-    
+
     def list_documents(self, space_id: str, data_source_id: str) -> list[dict]:
-        """Возвращает список документов в указанном data source."""
+        """Returns the list of documents in the given data source."""
         url = (
             f"{self.base_url}/api/v1/w/{self.workspace_id}"
             f"/spaces/{space_id}/data_sources/{data_source_id}/documents"
         )
         response = requests.get(url, headers=self._headers())
         return self._handle_response(response)["documents"]
-    
+
     def get_conversation(self, conversation_id: str) -> dict:
-        """Возвращает разговор по его id, включая всю историю сообщений."""
+        """Returns a conversation by its id, including its full message history."""
         url = (
             f"{self.base_url}/api/v1/w/{self.workspace_id}"
             f"/assistant/conversations/{conversation_id}"
         )
         response = requests.get(url, headers=self._headers())
         return self._handle_response(response)["conversation"]
-    
+
     def import_agent(
         self,
         handle: str,
@@ -164,19 +165,20 @@ class DustClient:
         visualization_enabled: bool = False,
     ) -> dict:
         """
-        Создаёт нового агента в workspace.
+        Creates a new agent in the workspace.
 
-        Требования к полям найдены эмпирически 09.07.2026 через серию
-        живых 400-ошибок (см. NOTES.md) — официальная OpenAPI-спека
-        неточна в нескольких местах:
-        - avatar_url обязателен, хотя в спеке помечен опциональным
-        - editors — список строк (email), а не объектов, как в спеке
-        - editors требует минимум 1 элемент
-        - generation_settings.reasoning_effort обязателен
+        Field requirements were discovered empirically on 2026-07-09
+        through a series of live 400 errors (see NOTES.md) — the
+        official OpenAPI spec is inaccurate in several places:
+        - avatar_url is required, though marked optional in the spec
+        - editors is a list of strings (emails), not objects as shown
+          in the spec
+        - editors requires at least 1 element
+        - generation_settings.reasoning_effort is required
 
-        Важно: в отличие от create_conversation, этот метод НЕ вызывает
-        модель — это чистая операция записи, поэтому работает даже
-        на Free-плане, несмотря на "Programmatic access: No access".
+        Note: unlike create_conversation, this method does NOT invoke
+        a model — it's a pure write operation, so it works even on
+        the Free plan despite "Programmatic access: No access".
         """
         url = (
             f"{self.base_url}/api/v1/w/{self.workspace_id}"
@@ -206,15 +208,15 @@ class DustClient:
 
         response = requests.post(url, headers=self._headers(), json=payload)
         return self._handle_response(response)["agentConfiguration"]
-    
+
     def archive_agent(self, agent_sid: str) -> dict:
         """
-        Архивирует (soft-delete) агента по его sId.
+        Archives (soft-deletes) an agent by its sId.
 
-        Как и import_agent, эта операция не вызывает модель, поэтому
-        работает на Free-плане несмотря на "Programmatic access:
-        No access". Подтверждено живым вызовом 09.07.2026 без единой
-        ошибки валидации с первой попытки.
+        Like import_agent, this operation does not invoke a model, so
+        it works on the Free plan despite "Programmatic access: No
+        access". Confirmed with a live call on 2026-07-09 — it worked
+        on the first try, with no validation errors.
         """
         url = (
             f"{self.base_url}/api/v1/w/{self.workspace_id}"

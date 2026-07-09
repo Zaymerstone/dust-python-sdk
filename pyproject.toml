@@ -7,7 +7,7 @@ name = "conversational-agent-client"
 version = "0.1.0"
 description = "Unofficial Python client for the Dust (dust.tt) conversational AI agent platform API"
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 requires-python = ">=3.10"
 authors = [
     {name = "Egor Nesterov"}
@@ -17,8 +17,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Zaymerstone/dust-python-sdk"
-Repository = "https://github.com/Zaymerstone/dust-python-sdk"
+Homepage = "https://github.com/твой-username/dust-python-sdk"
+Repository = "https://github.com/твой-username/dust-python-sdk"
 
 [tool.setuptools.packages.find]
 where = ["src"]
