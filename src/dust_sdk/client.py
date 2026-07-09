@@ -206,3 +206,19 @@ class DustClient:
 
         response = requests.post(url, headers=self._headers(), json=payload)
         return self._handle_response(response)["agentConfiguration"]
+    
+    def archive_agent(self, agent_sid: str) -> dict:
+        """
+        Архивирует (soft-delete) агента по его sId.
+
+        Как и import_agent, эта операция не вызывает модель, поэтому
+        работает на Free-плане несмотря на "Programmatic access:
+        No access". Подтверждено живым вызовом 09.07.2026 без единой
+        ошибки валидации с первой попытки.
+        """
+        url = (
+            f"{self.base_url}/api/v1/w/{self.workspace_id}"
+            f"/assistant/agent_configurations/{agent_sid}"
+        )
+        response = requests.delete(url, headers=self._headers())
+        return self._handle_response(response)
