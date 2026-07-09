@@ -4,7 +4,7 @@
     "created": 1783587958492,
     "updated": 1783587964580,
     "sId": "3U61h9tf0Y",
-    "title": "Тестовое приветственное сообщение",
+    "title": "Test greeting message",
     "visibility": "unlisted",
     "content": [
       [
@@ -16,7 +16,7 @@
           "version": 0,
           "rank": 0,
           "created": 1783587958665,
-          "content": "Привет, тестовое сообщение",
+          "content": "Hello, test message",
           "context": {
             "username": "test-user",
             "timezone": "Europe/Budapest"
@@ -37,13 +37,13 @@
           "rank": 1,
           "parentMessageId": "VVHZ8TXuCZ",
           "status": "succeeded",
-          "content": "Привет! Всё работает, тестовое сообщение получено. Чем могу помочь?",
+          "content": "Hello! Everything works, test message received. How can I help?",
           "contents": [
             {
               "step": 0,
               "content": {
                 "type": "text_content",
-                "value": "Привет! Всё работает, тестовое сообщение получено. Чем могу помочь?"
+                "value": "Hello! Everything works, test message received. How can I help?"
               }
             }
           ],

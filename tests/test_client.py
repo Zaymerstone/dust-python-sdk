@@ -26,7 +26,8 @@ def test_list_agents_returns_agent_list():
 
     assert len(agents) == 10
     assert agents[0]["sId"] == "helper"
-    
+
+
 def test_create_conversation_returns_agent_answer():
     fixture = load_fixture("conversation_response.json")
 
@@ -42,14 +43,15 @@ def test_create_conversation_returns_agent_answer():
             json=fixture,
         )
         conversation = client.create_conversation(
-            message_content="Привет!",
+            message_content="Hello!",
             agent_sid="claude-5-sonnet",
         )
 
     answer = client.get_last_agent_message_text(conversation)
     assert answer is not None
-    assert "чем могу помочь" in answer.lower()
-    
+    assert "how can i help" in answer.lower()
+
+
 def test_list_spaces_returns_spaces():
     fixture = load_fixture("spaces_response.json")
 
@@ -68,7 +70,8 @@ def test_list_spaces_returns_spaces():
 
     assert len(spaces) == 1
     assert spaces[0]["name"] == "Company Data"
-    
+
+
 def test_list_data_sources_returns_data_sources():
     fixture = load_fixture("data_sources_response.json")
 
@@ -86,7 +89,8 @@ def test_list_data_sources_returns_data_sources():
         data_sources = client.list_data_sources(space_id="fake-space")
 
     assert data_sources == []
-    
+
+
 def test_get_agent_returns_single_agent():
     fixture = load_fixture("single_agent_response.json")
 
@@ -105,7 +109,8 @@ def test_get_agent_returns_single_agent():
 
     assert agent["sId"] == "claude-5-sonnet"
     assert agent["model"]["providerId"] == "anthropic"
-    
+
+
 def test_get_tables_returns_table_list():
     fixture = load_fixture("tables_response.json")
 
@@ -124,7 +129,8 @@ def test_get_tables_returns_table_list():
 
     assert len(tables) == 1
     assert tables[0]["title"] == "ROI Data"
-    
+
+
 def test_list_documents_returns_document_list():
     fixture = load_fixture("documents_response.json")
 
@@ -144,6 +150,7 @@ def test_list_documents_returns_document_list():
     assert len(documents) == 1
     assert documents[0]["title"] == "Customer Support FAQ"
 
+
 def test_get_conversation_returns_conversation():
     fixture = load_fixture("get_conversation_response.json")
 
@@ -161,8 +168,9 @@ def test_get_conversation_returns_conversation():
         conversation = client.get_conversation(conversation_id="fake-cid")
 
     assert conversation["sId"] == "3U61h9tf0Y"
-    assert conversation["title"] == "Тестовое приветственное сообщение"
-    
+    assert conversation["title"] == "Test greeting message"
+
+
 def test_import_agent_creates_agent():
     fixture = load_fixture("import_agent_response.json")
 
@@ -187,6 +195,7 @@ def test_import_agent_creates_agent():
 
     assert agent["sId"] == "hKKykKCnRI"
     assert agent["name"] == "sdk-test-agent"
+
 
 def test_archive_agent_returns_success():
     fixture = load_fixture("archive_agent_response.json")
