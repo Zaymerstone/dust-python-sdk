@@ -1,33 +1,63 @@
 {
   "conversation": {
-    "id": 1,
-    "sId": "conv-fake-123",
-    "created": 1735689600000,
-    "title": "Customer Inquiry",
+    "id": 274891271276,
+    "created": 1783587958492,
+    "updated": 1783587964580,
+    "sId": "3U61h9tf0Y",
+    "title": "Тестовое приветственное сообщение",
     "visibility": "unlisted",
     "content": [
       [
         {
-          "id": 1,
-          "sId": "msg-user-1",
+          "id": 274944761157,
+          "sId": "VVHZ8TXuCZ",
           "type": "user_message",
-          "content": "Привет! Расскажи в двух словах, что ты умеешь.",
-          "context": { "timezone": "UTC", "username": "sdk-user" }
+          "visibility": "visible",
+          "version": 0,
+          "rank": 0,
+          "created": 1783587958665,
+          "content": "Привет, тестовое сообщение",
+          "context": {
+            "username": "test-user",
+            "timezone": "Europe/Budapest"
+          },
+          "mentions": [{ "configurationId": "dust" }]
         }
       ],
       [
         {
-          "id": 2,
-          "sId": "msg-agent-1",
+          "id": 274944761159,
+          "agentMessageId": 274908985071,
+          "sId": "P9jDdv9LU4",
+          "created": 1783587958675,
+          "completedTs": 1783587962851,
           "type": "agent_message",
-          "status": "completed",
-          "content": "Привет! Я помогаю искать и анализировать данные компании, работать с интернетом и создавать контент.",
-          "rawContents": [
+          "visibility": "visible",
+          "version": 0,
+          "rank": 1,
+          "parentMessageId": "VVHZ8TXuCZ",
+          "status": "succeeded",
+          "content": "Привет! Всё работает, тестовое сообщение получено. Чем могу помочь?",
+          "contents": [
             {
-              "step": 1,
-              "content": "Привет! Я помогаю искать и анализировать данные компании, работать с интернетом и создавать контент."
+              "step": 0,
+              "content": {
+                "type": "text_content",
+                "value": "Привет! Всё работает, тестовое сообщение получено. Чем могу помочь?"
+              }
             }
-          ]
+          ],
+          "error": null,
+          "costCredits": 2,
+          "configuration": {
+            "sId": "dust",
+            "name": "dust",
+            "status": "active",
+            "model": {
+              "providerId": "anthropic",
+              "modelId": "claude-sonnet-4-6"
+            }
+          }
         }
       ]
     ]

@@ -48,7 +48,7 @@ def test_create_conversation_returns_agent_answer():
 
     answer = client.get_last_agent_message_text(conversation)
     assert answer is not None
-    assert "помогаю" in answer
+    assert "чем могу помочь" in answer.lower()
     
 def test_list_spaces_returns_spaces():
     fixture = load_fixture("spaces_response.json")
@@ -160,5 +160,5 @@ def test_get_conversation_returns_conversation():
         )
         conversation = client.get_conversation(conversation_id="fake-cid")
 
-    assert conversation["sId"] == "3d8f6a2c1b"
-    assert conversation["title"] == "Customer Inquiry #1234"
+    assert conversation["sId"] == "3U61h9tf0Y"
+    assert conversation["title"] == "Тестовое приветственное сообщение"
