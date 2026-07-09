@@ -1,0 +1,96 @@
+{
+  "conversation": {
+    "id": 67890,
+    "created": 1625097600,
+    "sId": "3d8f6a2c1b",
+    "owner": {
+      "id": 67890,
+      "sId": "dQFf9l5FQY",
+      "name": "My Awesome Workspace",
+      "role": "admin",
+      "segmentation": "enterprise",
+      "flags": ["advanced_analytics", "beta_features"],
+      "ssoEnforced": true,
+      "regionalModelsOnly": false,
+      "whiteListedProviders": ["google", "github"],
+      "defaultEmbeddingProvider": "openai"
+    },
+    "title": "Customer Inquiry #1234",
+    "visibility": "private",
+    "content": [
+      [
+        {
+          "id": 1,
+          "sId": "9e7d5c3a1f",
+          "type": "human",
+          "visibility": "visible",
+          "version": 1,
+          "created": 1625097700,
+          "user": {
+            "sId": "0ec9852c2f",
+            "id": 12345,
+            "createdAt": 1625097600,
+            "username": "johndoe",
+            "email": "john.doe@example.com",
+            "firstName": "John",
+            "lastName": "Doe",
+            "fullName": "John Doe",
+            "provider": "google",
+            "image": "https://example.com/profile/johndoe.jpg"
+          },
+          "mentions": [
+            {
+              "configurationId": "7f3a9c2b1e"
+            }
+          ],
+          "content": "Hello, I need help with my order.",
+          "context": {
+            "username": "johndoe123",
+            "timezone": "America/New_York",
+            "fullName": "John Doe",
+            "email": "john.doe@example.com",
+            "profilePictureUrl": "https://example.com/profiles/johndoe123.jpg",
+            "agenticMessageData": {
+              "type": "run_agent",
+              "originMessageId": "2b8e4f6a0c"
+            }
+          },
+          "agentMessageId": 1,
+          "parentMessageId": "2b8e4f6a0c",
+          "status": "completed",
+          "actions": [],
+          "chainOfThought": "The user is asking about their order. I should first greet them and then ask for their order number.",
+          "rawContents": [
+            {
+              "step": 1,
+              "content": "Hello! I'd be happy to help you with your order. Could you please provide your order number?"
+            }
+          ],
+          "error": null,
+          "configuration": {
+            "id": 12345,
+            "sId": "7f3a9c2b1e",
+            "version": 2,
+            "versionCreatedAt": "2023-06-15T14:30:00Z",
+            "versionAuthorId": "0ec9852c2f",
+            "name": "Customer Support Agent",
+            "description": "An AI agent designed to handle customer support inquiries",
+            "instructions": "Always greet the customer politely and try to resolve their issue efficiently.",
+            "pictureUrl": "https://example.com/agent-images/support-agent.png",
+            "status": "active",
+            "scope": "workspace",
+            "userFavorite": true,
+            "model": {
+              "providerId": "openai",
+              "modelId": "gpt-4",
+              "temperature": 0.7
+            },
+            "actions": [],
+            "maxStepsPerRun": 10,
+            "templateId": "b4e2f1a9c7"
+          }
+        }
+      ]
+    ]
+  }
+}
