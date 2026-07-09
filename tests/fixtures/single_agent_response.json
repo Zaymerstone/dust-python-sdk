@@ -1,0 +1,33 @@
+{
+  "agentConfiguration": {
+    "id": -1,
+    "sId": "claude-5-sonnet",
+    "version": 0,
+    "versionCreatedAt": null,
+    "versionAuthorId": null,
+    "name": "claude-sonnet",
+    "description": "Anthropic's Claude Sonnet 5 model, reaching near-Opus quality on coding and agentic work while balancing power and efficiency (200k context).",
+    "instructions": "\nRespond in a helpful, honest, and engaging way. \nUnless instructed to be brief, present answers with clear structure and formatting to improve readability: use headings, bullet points, and examples when appropriate.\nThe agent always respects the Markdown format and generates spaces to nest content.\n\nOnly use visualization if it is strictly necessary to visualize data or if it was explicitly requested by the user.\nDo not use visualization if Markdown is sufficient.\n\nNever use em dashes (—) in your responses. Use commas, semicolons, parentheses, or separate sentences instead.\n\n\nIf the user's question requires information that is recent and likely to be found on the public internet, the agent should use the internet to answer the question. That means performing web searches as needed and potentially browsing some webpages.\nIf the user's query requires neither internal company data nor recent public knowledge, the agent can answer without using any tool.\n",
+    "instructionsHtml": null,
+    "pictureUrl": "https://dust.tt/static/systemavatar/claude_avatar_full.png",
+    "status": "active",
+    "scope": "global",
+    "userFavorite": false,
+    "model": {
+      "providerId": "anthropic",
+      "modelId": "claude-sonnet-5",
+      "temperature": 0.7,
+      "reasoningEffort": "medium"
+    },
+    "actions": [],
+    "skills": ["frames"],
+    "maxStepsPerRun": 64,
+    "visualizationEnabled": false,
+    "templateId": null,
+    "requestedGroupIds": [],
+    "requestedSpaceIds": [],
+    "tags": [],
+    "canRead": true,
+    "canEdit": false
+  }
+}

@@ -86,3 +86,22 @@ def test_list_data_sources_returns_data_sources():
         data_sources = client.list_data_sources(space_id="fake-space")
 
     assert data_sources == []
+    
+def test_get_agent_returns_single_agent():
+    fixture = load_fixture("single_agent_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/assistant/agent_configurations/claude-5-sonnet",
+            json=fixture,
+        )
+        agent = client.get_agent("claude-5-sonnet")
+
+    assert agent["sId"] == "claude-5-sonnet"
+    assert agent["model"]["providerId"] == "anthropic"

@@ -103,3 +103,8 @@ class DustClient:
         url = f"{self.base_url}/api/v1/w/{self.workspace_id}/spaces/{space_id}/data_sources"
         response = requests.get(url, headers=self._headers())
         return self._handle_response(response)["data_sources"]
+    def get_agent(self, agent_sid: str) -> dict:
+        """Возвращает конфигурацию одного агента по его sId."""
+        url = f"{self.base_url}/api/v1/w/{self.workspace_id}/assistant/agent_configurations/{agent_sid}"
+        response = requests.get(url, headers=self._headers())
+        return self._handle_response(response)["agentConfiguration"]
