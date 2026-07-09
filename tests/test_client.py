@@ -162,3 +162,28 @@ def test_get_conversation_returns_conversation():
 
     assert conversation["sId"] == "3U61h9tf0Y"
     assert conversation["title"] == "Тестовое приветственное сообщение"
+    
+def test_import_agent_creates_agent():
+    fixture = load_fixture("import_agent_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.post(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/assistant/agent_configurations/import",
+            json=fixture,
+        )
+        agent = client.import_agent(
+            handle="sdk-test-agent",
+            description="Test agent",
+            instructions="You are a test agent.",
+            editors=["test@example.com"],
+            avatar_url="https://dust.tt/static/systemavatar/dust_avatar_full.png",
+        )
+
+    assert agent["sId"] == "hKKykKCnRI"
+    assert agent["name"] == "sdk-test-agent"

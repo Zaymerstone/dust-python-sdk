@@ -147,3 +147,62 @@ class DustClient:
         )
         response = requests.get(url, headers=self._headers())
         return self._handle_response(response)["conversation"]
+    
+    def import_agent(
+        self,
+        handle: str,
+        description: str,
+        instructions: str,
+        editors: list[str],
+        avatar_url: str,
+        model_id: str = "claude-sonnet-5",
+        provider_id: str = "anthropic",
+        temperature: float = 0.7,
+        reasoning_effort: str = "medium",
+        max_steps_per_run: int = 5,
+        scope: str = "hidden",
+        visualization_enabled: bool = False,
+    ) -> dict:
+        """
+        Создаёт нового агента в workspace.
+
+        Требования к полям найдены эмпирически 09.07.2026 через серию
+        живых 400-ошибок (см. NOTES.md) — официальная OpenAPI-спека
+        неточна в нескольких местах:
+        - avatar_url обязателен, хотя в спеке помечен опциональным
+        - editors — список строк (email), а не объектов, как в спеке
+        - editors требует минимум 1 элемент
+        - generation_settings.reasoning_effort обязателен
+
+        Важно: в отличие от create_conversation, этот метод НЕ вызывает
+        модель — это чистая операция записи, поэтому работает даже
+        на Free-плане, несмотря на "Programmatic access: No access".
+        """
+        url = (
+            f"{self.base_url}/api/v1/w/{self.workspace_id}"
+            f"/assistant/agent_configurations/import"
+        )
+
+        payload = {
+            "agent": {
+                "handle": handle,
+                "description": description,
+                "scope": scope,
+                "avatar_url": avatar_url,
+                "max_steps_per_run": max_steps_per_run,
+                "visualization_enabled": visualization_enabled,
+            },
+            "instructions": instructions,
+            "generation_settings": {
+                "model_id": model_id,
+                "provider_id": provider_id,
+                "temperature": temperature,
+                "reasoning_effort": reasoning_effort,
+            },
+            "tags": [],
+            "editors": editors,
+            "toolset": [],
+        }
+
+        response = requests.post(url, headers=self._headers(), json=payload)
+        return self._handle_response(response)["agentConfiguration"]

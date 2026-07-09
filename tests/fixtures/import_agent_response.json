@@ -1,0 +1,24 @@
+{
+  "agentConfiguration": {
+    "id": 274879177605,
+    "sId": "hKKykKCnRI",
+    "versionCreatedAt": "2026-07-09T11:44:36.625Z",
+    "version": 0,
+    "scope": "hidden",
+    "name": "sdk-test-agent",
+    "description": "Test agent created via SDK experiment",
+    "instructions": "You are a test agent for SDK development purposes.",
+    "model": {
+      "providerId": "anthropic",
+      "modelId": "claude-sonnet-5",
+      "temperature": 0.7
+    },
+    "pictureUrl": "https://dust.tt/static/systemavatar/dust_avatar_full.png",
+    "status": "active",
+    "maxStepsPerRun": 64,
+    "canRead": true,
+    "canEdit": true,
+    "actions": []
+  },
+  "skippedActions": []
+}
