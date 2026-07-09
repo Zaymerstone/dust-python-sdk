@@ -68,3 +68,21 @@ def test_list_spaces_returns_spaces():
 
     assert len(spaces) == 1
     assert spaces[0]["name"] == "Company Data"
+    
+def test_list_data_sources_returns_data_sources():
+    fixture = load_fixture("data_sources_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/spaces/fake-space/data_sources",
+            json=fixture,
+        )
+        data_sources = client.list_data_sources(space_id="fake-space")
+
+    assert data_sources == []
