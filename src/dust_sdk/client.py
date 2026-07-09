@@ -25,19 +25,25 @@ class DustClient:
             "Content-Type": "application/json",
         }
 
-    def list_agents(self) -> list[dict]:
-        """Возвращает список agent configurations в workspace."""
-        url = f"{self.base_url}/api/v1/w/{self.workspace_id}/assistant/agent_configurations"
-        response = requests.get(url, headers=self._headers())
-
+    def _handle_response(self, response: requests.Response) -> dict:
+        """
+        Общая обработка ответа для всех методов: проверка статуса
+        и парсинг JSON. Вынесено сюда после того, как эта же проверка
+        стала дублироваться в 4 разных методах подряд (list_agents,
+        create_conversation, list_spaces, list_data_sources).
+        """
         if response.status_code != 200:
             raise DustAPIError(
                 f"Dust API вернул {response.status_code}: {response.text}"
             )
-    
+        return response.json()
 
-        return response.json()["agentConfigurations"]
-    
+    def list_agents(self) -> list[dict]:
+        """Возвращает список agent configurations в workspace."""
+        url = f"{self.base_url}/api/v1/w/{self.workspace_id}/assistant/agent_configurations"
+        response = requests.get(url, headers=self._headers())
+        return self._handle_response(response)["agentConfigurations"]
+
     def create_conversation(
         self,
         message_content: str,
@@ -69,13 +75,7 @@ class DustClient:
         }
 
         response = requests.post(url, headers=self._headers(), json=payload)
-
-        if response.status_code != 200:
-            raise DustAPIError(
-                f"Dust API вернул {response.status_code}: {response.text}"
-            )
-
-        return response.json()["conversation"]
+        return self._handle_response(response)["conversation"]
 
     @staticmethod
     def get_last_agent_message_text(conversation: dict) -> str | None:
@@ -91,14 +91,15 @@ class DustClient:
             if latest_version.get("type") == "agent_message":
                 return latest_version.get("content")
         return None
+
     def list_spaces(self) -> list[dict]:
         """Возвращает список spaces (пространств) в workspace."""
         url = f"{self.base_url}/api/v1/w/{self.workspace_id}/spaces"
         response = requests.get(url, headers=self._headers())
+        return self._handle_response(response)["spaces"]
 
-        if response.status_code != 200:
-            raise DustAPIError(
-                f"Dust API вернул {response.status_code}: {response.text}"
-            )
-
-        return response.json()["spaces"]
+    def list_data_sources(self, space_id: str) -> list[dict]:
+        """Возвращает список data sources в указанном space."""
+        url = f"{self.base_url}/api/v1/w/{self.workspace_id}/spaces/{space_id}/data_sources"
+        response = requests.get(url, headers=self._headers())
+        return self._handle_response(response)["data_sources"]
