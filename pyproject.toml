@@ -3,14 +3,22 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "dust-sdk"
+name = "conversational-agent-client"
 version = "0.1.0"
-description = "Unofficial Python SDK for the Dust API"
+description = "Unofficial Python client for the Dust (dust.tt) conversational AI agent platform API"
+readme = "README.md"
+license = {text = "MIT"}
 requires-python = ">=3.10"
+authors = [
+    {name = "Egor Nesterov"}
+]
 dependencies = [
     "requests",
-    "python-dotenv",
 ]
+
+[project.urls]
+Homepage = "https://github.com/Zaymerstone/dust-python-sdk"
+Repository = "https://github.com/Zaymerstone/dust-python-sdk"
 
 [tool.setuptools.packages.find]
 where = ["src"]
