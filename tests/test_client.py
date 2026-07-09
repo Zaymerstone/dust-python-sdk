@@ -143,3 +143,22 @@ def test_list_documents_returns_document_list():
 
     assert len(documents) == 1
     assert documents[0]["title"] == "Customer Support FAQ"
+
+def test_get_conversation_returns_conversation():
+    fixture = load_fixture("get_conversation_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/assistant/conversations/fake-cid",
+            json=fixture,
+        )
+        conversation = client.get_conversation(conversation_id="fake-cid")
+
+    assert conversation["sId"] == "3d8f6a2c1b"
+    assert conversation["title"] == "Customer Inquiry #1234"

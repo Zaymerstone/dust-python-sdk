@@ -141,3 +141,12 @@ class DustClient:
         )
         response = requests.get(url, headers=self._headers())
         return self._handle_response(response)["documents"]
+    
+    def get_conversation(self, conversation_id: str) -> dict:
+        """Возвращает разговор по его id, включая всю историю сообщений."""
+        url = (
+            f"{self.base_url}/api/v1/w/{self.workspace_id}"
+            f"/assistant/conversations/{conversation_id}"
+        )
+        response = requests.get(url, headers=self._headers())
+        return self._handle_response(response)["conversation"]
