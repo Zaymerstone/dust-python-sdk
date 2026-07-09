@@ -124,3 +124,22 @@ def test_get_tables_returns_table_list():
 
     assert len(tables) == 1
     assert tables[0]["title"] == "ROI Data"
+    
+def test_list_documents_returns_document_list():
+    fixture = load_fixture("documents_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/spaces/fake-space/data_sources/fake-ds/documents",
+            json=fixture,
+        )
+        documents = client.list_documents(space_id="fake-space", data_source_id="fake-ds")
+
+    assert len(documents) == 1
+    assert documents[0]["title"] == "Customer Support FAQ"

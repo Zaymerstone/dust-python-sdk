@@ -103,11 +103,13 @@ class DustClient:
         url = f"{self.base_url}/api/v1/w/{self.workspace_id}/spaces/{space_id}/data_sources"
         response = requests.get(url, headers=self._headers())
         return self._handle_response(response)["data_sources"]
+    
     def get_agent(self, agent_sid: str) -> dict:
         """Возвращает конфигурацию одного агента по его sId."""
         url = f"{self.base_url}/api/v1/w/{self.workspace_id}/assistant/agent_configurations/{agent_sid}"
         response = requests.get(url, headers=self._headers())
         return self._handle_response(response)["agentConfiguration"]
+    
     def get_tables(self, space_id: str, data_source_id: str) -> list[dict]:
         """
         Возвращает список таблиц в указанном data source.
@@ -130,3 +132,12 @@ class DustClient:
             )
 
         return response.json()
+    
+    def list_documents(self, space_id: str, data_source_id: str) -> list[dict]:
+        """Возвращает список документов в указанном data source."""
+        url = (
+            f"{self.base_url}/api/v1/w/{self.workspace_id}"
+            f"/spaces/{space_id}/data_sources/{data_source_id}/documents"
+        )
+        response = requests.get(url, headers=self._headers())
+        return self._handle_response(response)["documents"]
