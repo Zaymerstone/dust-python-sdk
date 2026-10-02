@@ -17,8 +17,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/твой-username/dust-python-sdk"
-Repository = "https://github.com/твой-username/dust-python-sdk"
+Homepage = "https://github.com/Zaymerstone/dust-python-sdk"
+Repository = "https://github.com/Zaymerstone/dust-python-sdk"
 
 [tool.setuptools.packages.find]
 where = ["src"]
