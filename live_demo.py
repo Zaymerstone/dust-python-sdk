@@ -7,18 +7,17 @@ client = DustClient(
     base_url=os.environ.get("DUST_BASE_URL"),
 )
 
-print("=" * 50)
-print("Fetching agents from the workspace")
-print("=" * 50)
-agents = client.list_agents()
-for agent in agents:
-    print(f"  [{agent['sId']}] {agent['name']} — {agent['model']['providerId']}/{agent['model']['modelId']}")
+import requests
+import os
 
-print()
-print("=" * 50)
-print("Reading an existing conversation")
-print("=" * 50)
-conversation = client.get_conversation("3U61h9tf0Y")
-print(f"Title: {conversation['title']}")
-answer = client.get_last_agent_message_text(conversation)
-print(f"Agent's reply: {answer}")
+API_KEY = os.environ.get("DUST_API_KEY")
+WORKSPACE_ID = os.environ.get("DUST_WORKSPACE_ID")
+BASE_URL = os.environ.get("DUST_BASE_URL")
+SPACE_ID = "vlt_gXHmJTnpgyOFCSTlCnFi"  # наш Company Data space
+
+url = f"{BASE_URL}/api/v1/w/{WORKSPACE_ID}/spaces/{SPACE_ID}/apps"
+headers = {"Authorization": f"Bearer {API_KEY}"}
+
+response = requests.get(url, headers=headers)
+print("Status code:", response.status_code)
+print(response.json())
