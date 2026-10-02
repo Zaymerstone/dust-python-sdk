@@ -254,3 +254,22 @@ def test_search_data_source_returns_matching_documents():
     assert len(results) == 1
     assert results[0]["title"] == "Q1 Sales Report"
     assert results[0]["score"] > 0
+def test_list_skills_returns_skills():
+    fixture = load_fixture("skills_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/skills",
+            json=fixture,
+        )
+        skills = client.list_skills()
+
+    assert len(skills) == 1
+    assert skills[0]["name"] == "Testing skill 1"
+    assert skills[0]["status"] == "active"

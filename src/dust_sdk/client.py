@@ -250,3 +250,16 @@ class DustClient:
         }
         response = requests.get(url, headers=self._headers(), params=params)
         return self._handle_response(response)["documents"]
+    
+    
+    def list_skills(self) -> list[dict]:
+        """
+        Returns the list of custom skills in the workspace.
+
+        Confirmed live (2026-10-02) against a skill created through
+        the Dust web UI moments earlier — the API reflects changes
+        from the UI near-instantly.
+        """
+        url = f"{self.base_url}/api/v1/w/{self.workspace_id}/skills"
+        response = requests.get(url, headers=self._headers())
+        return self._handle_response(response)["skills"]
