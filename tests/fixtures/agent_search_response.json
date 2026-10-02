@@ -1,0 +1,23 @@
+{
+  "agentConfigurations": [
+    {
+      "id": 274879186812,
+      "sId": "0lXhhdzRZQ",
+      "version": 3,
+      "model": {
+        "providerId": "auto",
+        "modelId": "auto",
+        "temperature": 0.7
+      },
+      "status": "active",
+      "scope": "visible",
+      "name": "lawyer",
+      "description": "he is my lawyer",
+      "canRead": true,
+      "canEdit": false,
+      "tags": [],
+      "skills": [],
+      "actions": []
+    }
+  ]
+}

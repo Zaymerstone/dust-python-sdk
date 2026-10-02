@@ -263,3 +263,28 @@ class DustClient:
         url = f"{self.base_url}/api/v1/w/{self.workspace_id}/skills"
         response = requests.get(url, headers=self._headers())
         return self._handle_response(response)["skills"]
+    
+    def search_agents_by_name(self, query: str) -> list[dict]:
+        """
+        Searches agent configurations by name.
+
+        Known limitations, confirmed via live testing (2026-10-02):
+        - Global/system agents (scope: "global", e.g. the default
+          "dust" or "helper" agents) are never returned by this
+          endpoint, regardless of the query — only custom agents
+          (scope: "visible"/"hidden") are searchable this way.
+        - The matching behavior isn't a simple substring match: a
+          single-character query can match an agent's name, but the
+          agent's exact full name as the query can return no results.
+          The underlying matching logic is unclear and appears to
+          break down on longer queries. Reported to Dust; treat
+          results from this endpoint as unreliable for anything
+          beyond a loose, best-effort lookup.
+        """
+        url = (
+            f"{self.base_url}/api/v1/w/{self.workspace_id}"
+            f"/assistant/agent_configurations/search"
+        )
+        params = {"q": query}
+        response = requests.get(url, headers=self._headers(), params=params)
+        return self._handle_response(response)["agentConfigurations"]
