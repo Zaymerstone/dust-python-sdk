@@ -291,3 +291,23 @@ def test_search_agents_by_name_returns_matching_agents():
 
     assert len(agents) == 1
     assert agents[0]["name"] == "lawyer"
+    
+def test_export_agent_as_yaml_returns_raw_yaml_text():
+    with open("tests/fixtures/agent_export.yaml", encoding="utf-8") as f:
+        fixture_text = f.read()
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/assistant/agent_configurations/fake-sid/export/yaml",
+            text=fixture_text,
+        )
+        yaml_text = client.export_agent_as_yaml(agent_sid="fake-sid")
+
+    assert "handle: lawyer" in yaml_text
+    assert "description: he is my lawyer" in yaml_text

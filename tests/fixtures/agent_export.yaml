@@ -1,0 +1,18 @@
+agent:
+  avatar_url: https://dust.tt/static/droidavatar/Droid_Green_2.jpg
+  description: he is my lawyer
+  handle: lawyer
+  max_steps_per_run: 64
+  scope: visible
+  visualization_enabled: false
+editors:
+  - test@example.com
+generation_settings:
+  model_id: auto
+  provider_id: auto
+  reasoning_effort: none
+  temperature: 0.7
+instructions: to check documents i send you
+spaces: []
+tags: []
+toolset: []
