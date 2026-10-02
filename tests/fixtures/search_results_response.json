@@ -1,0 +1,14 @@
+{
+  "documents": [
+    {
+      "id": "doc-123",
+      "title": "Q1 Sales Report",
+      "content": "Revenue grew 15% quarter over quarter...",
+      "tags": ["sales", "q1"],
+      "parents": ["folder-abc"],
+      "timestamp": 1735689600000,
+      "data": {},
+      "score": 0.87
+    }
+  ]
+}

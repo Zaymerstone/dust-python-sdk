@@ -223,3 +223,30 @@ class DustClient:
         url = f"{self.base_url}/api/v1/w/{self.workspace_id}/spaces/{space_id}/apps"
         response = requests.get(url, headers=self._headers())
         return self._handle_response(response)["apps"]
+    def search_data_source(
+        self,
+        space_id: str,
+        data_source_id: str,
+        query: str,
+        top_k: int = 10,
+        full_text: bool = False,
+    ) -> list[dict]:
+        """
+        Performs a semantic search against a data source.
+
+        Unlike most other read methods, this is a query parameter
+        based GET request rather than a path-only one. top_k and
+        full_text are required by the API but given sensible defaults
+        here so callers only need to pass query in the common case.
+        """
+        url = (
+            f"{self.base_url}/api/v1/w/{self.workspace_id}"
+            f"/spaces/{space_id}/data_sources/{data_source_id}/search"
+        )
+        params = {
+            "query": query,
+            "top_k": top_k,
+            "full_text": full_text,
+        }
+        response = requests.get(url, headers=self._headers(), params=params)
+        return self._handle_response(response)["documents"]
