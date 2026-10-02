@@ -350,3 +350,23 @@ def test_update_agent_configuration_returns_updated_agent():
 
     assert agent["sId"] == "7f3a9c2b1e"
     assert agent["userFavorite"] is True
+def test_parse_mentions_in_markdown_converts_mentions():
+    fixture = load_fixture("parsed_mentions_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.post(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/assistant/mentions/parse",
+            json=fixture,
+        )
+        result = client.parse_mentions_in_markdown(
+            "Hello @dust, can you help with @lawyer?"
+        )
+
+    assert ":mention[dust]" in result
+    assert ":mention[lawyer]" in result
