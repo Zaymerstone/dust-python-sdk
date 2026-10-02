@@ -311,3 +311,21 @@ def test_export_agent_as_yaml_returns_raw_yaml_text():
 
     assert "handle: lawyer" in yaml_text
     assert "description: he is my lawyer" in yaml_text
+    
+def test_list_data_source_views_returns_views():
+    fixture = load_fixture("data_source_views_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/spaces/fake-space/data_source_views",
+            json=fixture,
+        )
+        views = client.list_data_source_views(space_id="fake-space")
+
+    assert views == []
