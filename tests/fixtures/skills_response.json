@@ -1,0 +1,26 @@
+{
+  "skills": [
+    {
+      "id": 274877919790,
+      "sId": "skl_YBECTK90Lvl18MROnFlk",
+      "createdAt": 1790962443776,
+      "updatedAt": 1790962443776,
+      "status": "active",
+      "name": "Testing skill 1",
+      "agentFacingDescription": "This skill is created solely for testing purposes",
+      "userFacingDescription": "Enables skill authoring capabilities for testing and development purposes.",
+      "instructions": "<skill id=\"skill-authoring\" name=\"Author Skills\" icon=\"ActionListIcon\" />",
+      "requestedSpaceIds": ["vlt_gXHmJTnpgyOFCSTlCnFi"],
+      "icon": "ActionRobotIcon",
+      "reinforcement": "on",
+      "source": "web_app",
+      "tools": [],
+      "fileAttachments": [],
+      "canRead": true,
+      "canWrite": false,
+      "canAdministrate": false,
+      "isDefault": true,
+      "availability": "users_and_agents"
+    }
+  ]
+}
