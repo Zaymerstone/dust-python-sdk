@@ -214,3 +214,20 @@ def test_archive_agent_returns_success():
         result = client.archive_agent(agent_sid="fake-sid")
 
     assert result["success"] is True
+def test_list_apps_returns_apps():
+    fixture = load_fixture("apps_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/spaces/fake-space/apps",
+            json=fixture,
+        )
+        apps = client.list_apps(space_id="fake-space")
+
+    assert apps == []

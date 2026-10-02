@@ -218,3 +218,8 @@ class DustClient:
         )
         response = requests.delete(url, headers=self._headers())
         return self._handle_response(response)
+    def list_apps(self, space_id: str) -> list[dict]:
+        """Returns the list of Dust Apps in the given space."""
+        url = f"{self.base_url}/api/v1/w/{self.workspace_id}/spaces/{space_id}/apps"
+        response = requests.get(url, headers=self._headers())
+        return self._handle_response(response)["apps"]
