@@ -329,3 +329,24 @@ def test_list_data_source_views_returns_views():
         views = client.list_data_source_views(space_id="fake-space")
 
     assert views == []
+def test_update_agent_configuration_returns_updated_agent():
+    fixture = load_fixture("update_agent_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.patch(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/assistant/agent_configurations/fake-sid",
+            json=fixture,
+        )
+        agent = client.update_agent_configuration(
+            agent_sid="fake-sid",
+            user_favorite=True,
+        )
+
+    assert agent["sId"] == "7f3a9c2b1e"
+    assert agent["userFavorite"] is True

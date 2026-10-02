@@ -333,3 +333,45 @@ class DustClient:
         )
         response = requests.get(url, headers=self._headers())
         return self._handle_response(response)["dataSourceViews"]
+    def update_agent_configuration(
+        self,
+        agent_sid: str,
+        user_favorite: bool | None = None,
+        handle: str | None = None,
+        description: str | None = None,
+        instructions: str | None = None,
+        editors: list[str] | None = None,
+    ) -> dict:
+        """
+        Updates an existing agent configuration. All fields are
+        optional — only the ones provided are changed.
+
+        ⚠️ Requires the "admin" role in the workspace, confirmed via a
+        live 403 workspace_auth_error ("Only admin users can perform
+        this action") when attempted with a "builder" role account.
+        This restriction isn't documented in the official API spec.
+        Response schema is a reconstruction based on Dust's official
+        docs, not live-verified, since testing it live requires admin
+        access this dev account doesn't have.
+        """
+        url = (
+            f"{self.base_url}/api/v1/w/{self.workspace_id}"
+            f"/assistant/agent_configurations/{agent_sid}"
+        )
+
+        payload = {}
+        if user_favorite is not None:
+            payload["userFavorite"] = user_favorite
+        if handle is not None or description is not None:
+            payload["agent"] = {}
+            if handle is not None:
+                payload["agent"]["handle"] = handle
+            if description is not None:
+                payload["agent"]["description"] = description
+        if instructions is not None:
+            payload["instructions"] = instructions
+        if editors is not None:
+            payload["editors"] = editors
+
+        response = requests.patch(url, headers=self._headers(), json=payload)
+        return self._handle_response(response)["agentConfiguration"]
