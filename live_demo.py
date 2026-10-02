@@ -13,11 +13,12 @@ import os
 API_KEY = os.environ.get("DUST_API_KEY")
 WORKSPACE_ID = os.environ.get("DUST_WORKSPACE_ID")
 BASE_URL = os.environ.get("DUST_BASE_URL")
-SPACE_ID = "vlt_gXHmJTnpgyOFCSTlCnFi"
+AGENT_SID = "0lXhhdzRZQ"  # твой lawyer
 
-url = f"{BASE_URL}/api/v1/w/{WORKSPACE_ID}/spaces/{SPACE_ID}/data_source_views"
-headers = {"Authorization": f"Bearer {API_KEY}"}
+url = f"{BASE_URL}/api/v1/w/{WORKSPACE_ID}/assistant/agent_configurations/{AGENT_SID}"
+headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
+payload = {"userFavorite": True}
 
-response = requests.get(url, headers=headers)
+response = requests.patch(url, headers=headers, json=payload)
 print("Status code:", response.status_code)
 print(response.json())

@@ -1,0 +1,19 @@
+{
+  "agentConfiguration": {
+    "id": 12345,
+    "sId": "7f3a9c2b1e",
+    "version": 2,
+    "name": "Customer Support Agent",
+    "description": "An AI agent designed to handle customer support inquiries",
+    "status": "active",
+    "scope": "workspace",
+    "userFavorite": true,
+    "model": {
+      "providerId": "openai",
+      "modelId": "gpt-4",
+      "temperature": 0.7
+    },
+    "maxStepsPerRun": 10
+  },
+  "skippedActions": []
+}
