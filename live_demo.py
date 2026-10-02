@@ -13,12 +13,13 @@ import os
 API_KEY = os.environ.get("DUST_API_KEY")
 WORKSPACE_ID = os.environ.get("DUST_WORKSPACE_ID")
 BASE_URL = os.environ.get("DUST_BASE_URL")
+AGENT_SID = "0lXhhdzRZQ"  # твой lawyer
 
-url = f"{BASE_URL}/api/v1/w/{WORKSPACE_ID}/assistant/agent_configurations/search"
+url = f"{BASE_URL}/api/v1/w/{WORKSPACE_ID}/assistant/agent_configurations/{AGENT_SID}/export/yaml"
 headers = {"Authorization": f"Bearer {API_KEY}"}
-params = {"q": "D"}
 
-response = requests.get(url, headers=headers, params=params)
-print("Final URL:", response.url)
+response = requests.get(url, headers=headers)
 print("Status code:", response.status_code)
-print(response.json())
+print("Content-Type:", response.headers.get("Content-Type"))
+print("Response text:")
+print(response.text)

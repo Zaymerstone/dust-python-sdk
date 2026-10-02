@@ -288,3 +288,30 @@ class DustClient:
         params = {"q": query}
         response = requests.get(url, headers=self._headers(), params=params)
         return self._handle_response(response)["agentConfigurations"]
+    
+    def export_agent_as_yaml(self, agent_sid: str) -> str:
+        """
+        Exports an agent configuration as a raw YAML string.
+
+        Unlike every other method, this endpoint returns
+        Content-Type: text/yaml, not JSON — so this bypasses
+        _handle_response() entirely and returns response.text
+        directly, rather than parsing or unwrapping anything.
+
+        The exported schema matches the payload shape expected by
+        import_agent(), confirmed by inspecting a real export
+        (2026-10-02): both use agent.handle, agent.description,
+        editors, generation_settings, etc.
+        """
+        url = (
+            f"{self.base_url}/api/v1/w/{self.workspace_id}"
+            f"/assistant/agent_configurations/{agent_sid}/export/yaml"
+        )
+        response = requests.get(url, headers=self._headers())
+
+        if response.status_code != 200:
+            raise DustAPIError(
+                f"Dust API returned {response.status_code}: {response.text}"
+            )
+
+        return response.text
