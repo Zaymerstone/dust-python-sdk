@@ -273,3 +273,21 @@ def test_list_skills_returns_skills():
     assert len(skills) == 1
     assert skills[0]["name"] == "Testing skill 1"
     assert skills[0]["status"] == "active"
+def test_search_agents_by_name_returns_matching_agents():
+    fixture = load_fixture("agent_search_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/assistant/agent_configurations/search",
+            json=fixture,
+        )
+        agents = client.search_agents_by_name(query="l")
+
+    assert len(agents) == 1
+    assert agents[0]["name"] == "lawyer"
