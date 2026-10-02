@@ -231,3 +231,26 @@ def test_list_apps_returns_apps():
         apps = client.list_apps(space_id="fake-space")
 
     assert apps == []
+def test_search_data_source_returns_matching_documents():
+    fixture = load_fixture("search_results_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/spaces/fake-space/data_sources/fake-ds/search",
+            json=fixture,
+        )
+        results = client.search_data_source(
+            space_id="fake-space",
+            data_source_id="fake-ds",
+            query="sales report",
+        )
+
+    assert len(results) == 1
+    assert results[0]["title"] == "Q1 Sales Report"
+    assert results[0]["score"] > 0
