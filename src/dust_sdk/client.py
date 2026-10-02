@@ -112,24 +112,18 @@ class DustClient:
         """
         Returns the list of tables in the given data source.
 
-        Note: unlike the other methods, this endpoint returns a bare
-        JSON array ([...]) rather than a wrapper object (e.g.
-        {"data_sources": [...]}). Because of that, _handle_response()
-        can't be used as-is here — it assumes response.json() is a
-        dict, but here it's a list.
+        Note: this endpoint used to return a bare JSON array instead of
+        a wrapper object, which required bypassing _handle_response().
+        Confirmed via Dust support (2026-07-XX) that the API now wraps
+        results as {"tables": [...]}, consistent with other list
+        endpoints — the docs page is still showing the old shape.
         """
         url = (
             f"{self.base_url}/api/v1/w/{self.workspace_id}"
             f"/spaces/{space_id}/data_sources/{data_source_id}/tables"
         )
         response = requests.get(url, headers=self._headers())
-
-        if response.status_code != 200:
-            raise DustAPIError(
-                f"Dust API returned {response.status_code}: {response.text}"
-            )
-
-        return response.json()
+        return self._handle_response(response)["tables"]
 
     def list_documents(self, space_id: str, data_source_id: str) -> list[dict]:
         """Returns the list of documents in the given data source."""
