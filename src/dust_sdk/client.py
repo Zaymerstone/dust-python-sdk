@@ -315,3 +315,21 @@ class DustClient:
             )
 
         return response.text
+    
+    def list_data_source_views(self, space_id: str) -> list[dict]:
+        """
+        Returns the list of data source views in the given space.
+
+        Note: distinct from list_data_sources(). A "view" is a scoped
+        window into a data source (e.g. restricted to certain parent
+        folders), whereas list_data_sources() returns the underlying
+        data sources themselves. Dust also has a separate, private
+        version of this endpoint at /api/w/... (no /v1/) — this uses
+        the public one.
+        """
+        url = (
+            f"{self.base_url}/api/v1/w/{self.workspace_id}"
+            f"/spaces/{space_id}/data_source_views"
+        )
+        response = requests.get(url, headers=self._headers())
+        return self._handle_response(response)["dataSourceViews"]
