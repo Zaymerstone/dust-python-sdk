@@ -375,3 +375,16 @@ class DustClient:
 
         response = requests.patch(url, headers=self._headers(), json=payload)
         return self._handle_response(response)["agentConfiguration"]
+    def parse_mentions_in_markdown(self, markdown: str) -> str:
+        """
+        Parses @-mentions in markdown text and converts them into
+        Dust's serialized mention format (e.g. "@dust" becomes
+        ":mention[dust]{sId=dust}"). Stateless utility — doesn't
+        require an existing conversation or invoke a model. Confirmed
+        live (2026-10-02) with both a global agent (@dust) and a
+        custom agent (@lawyer) in the same request.
+        """
+        url = f"{self.base_url}/api/v1/w/{self.workspace_id}/assistant/mentions/parse"
+        payload = {"markdown": markdown}
+        response = requests.post(url, headers=self._headers(), json=payload)
+        return self._handle_response(response)["markdown"]
