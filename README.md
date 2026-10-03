@@ -13,10 +13,8 @@ This project closes that gap.
 ## Installation
 
 ```bash
-pip install dust-sdk
+pip install conversational-agent-client
 ```
-
-_(not yet published to PyPI — see [Status](#status) below)_
 
 ## Quickstart
 
@@ -54,57 +52,96 @@ your first call.
 
 ## What's implemented
 
-| Method                            | Operation             | Verified against         |
-| --------------------------------- | --------------------- | ------------------------ |
-| `list_agents()`                   | GET agent list        | ✅ Live API call         |
-| `get_agent(sid)`                  | GET single agent      | ✅ Live API call         |
-| `list_spaces()`                   | GET spaces            | ✅ Live API call         |
-| `list_data_sources(space_id)`     | GET data sources      | ✅ Live API call         |
-| `list_documents(space_id, ds_id)` | GET documents         | 📄 Official OpenAPI spec |
-| `get_tables(space_id, ds_id)`     | GET tables            | 📄 Official OpenAPI spec |
-| `create_conversation(...)`        | POST new conversation | ✅ Live API call         |
-| `get_conversation(cid)`           | GET conversation      | ✅ Live API call         |
-| `import_agent(...)`               | POST create agent     | ✅ Live API call         |
-| `archive_agent(sid)`              | DELETE (soft) agent   | ✅ Live API call         |
+21 methods, covering agents, spaces, data sources, apps, skills,
+conversations, feedback, and analytics.
+
+| Method                                | Operation             | Verified against                    |
+| ------------------------------------- | --------------------- | ----------------------------------- |
+| `list_agents()`                       | GET agent list        | ✅ Live API call                    |
+| `get_agent(sid)`                      | GET single agent      | ✅ Live API call                    |
+| `search_agents_by_name(query)`        | GET agent search      | ✅ Live API call ⚠️ see limitations |
+| `export_agent_as_yaml(sid)`           | GET agent as YAML     | ✅ Live API call                    |
+| `import_agent(...)`                   | POST create agent     | ✅ Live API call                    |
+| `update_agent_configuration(...)`     | PATCH update agent    | 📄 Official docs ⚠️ admin-only      |
+| `archive_agent(sid)`                  | DELETE (soft) agent   | ✅ Live API call                    |
+| `list_spaces()`                       | GET spaces            | ✅ Live API call                    |
+| `list_data_sources(space_id)`         | GET data sources      | ✅ Live API call                    |
+| `list_documents(space_id, ds_id)`     | GET documents         | 📄 Official docs                    |
+| `get_tables(space_id, ds_id)`         | GET tables            | ✅ Live API call                    |
+| `search_data_source(...)`             | GET semantic search   | 📄 Official docs                    |
+| `list_apps(space_id)`                 | GET apps in space     | ✅ Live API call                    |
+| `create_app_run(...)`                 | POST run a Dust App   | 📄 Official docs                    |
+| `list_skills()`                       | GET custom skills     | ✅ Live API call                    |
+| `list_data_source_views(space_id)`    | GET data source views | ✅ Live API call                    |
+| `create_conversation(...)`            | POST new conversation | ✅ Live API call                    |
+| `get_conversation(cid)`               | GET conversation      | ✅ Live API call                    |
+| `get_feedbacks_for_conversation(cid)` | GET feedback entries  | 📄 Official docs ⚠️ see limitations |
+| `parse_mentions_in_markdown(text)`    | POST parse @mentions  | ✅ Live API call                    |
+| `export_workspace_analytics(...)`     | GET analytics export  | 📄 Official docs ⚠️ admin-only      |
 
 _"Live API call" means the response schema was confirmed against a
-real request during development, not just documentation. "Official
-OpenAPI spec" means it's based on Dust's published spec but hasn't
-been round-tripped against a live response yet (usually because
-testing it live requires resources — like a connected data source —
-that weren't available in the development workspace)._
+real request during development. "Official docs" means it's based on
+Dust's published documentation but hasn't been round-tripped against
+a live response, usually because that requires resources (an admin
+role, a configured Dust App, a connected data source) that weren't
+available in the development workspace._
 
 ## Known limitations
 
-- **Message-sending is gated on Dust's Free plan.** Any endpoint that
-  invokes a model (`create_conversation` with an agent mention) returns
-  `429 rate_limit_error` on workspaces without a paid seat —
-  `Programmatic usage` is entirely disabled (`No access`) on Free,
-  independent of the regular in-app usage credits shown in the UI.
-  Write operations that _don't_ invoke a model (`import_agent`,
-  `archive_agent`) work fine on Free.
-- **Some `Private` API endpoints aren't accessible via API key at all**,
-  regardless of plan — e.g. `POST /spaces` (creating a space) returns
-  `401 not_authenticated` even with a valid Bearer token, because it's
-  a session-only, web-app-internal endpoint despite appearing in the
-  public API reference.
-- **The documentation contains at least one broken example URL.**
-  `GET /spaces` is shown at `https://dust.tt/api/w/{wId}/spaces`
-  (missing `/v1/`) — using that exact path returns a misleading
-  `401 not_authenticated` instead of a 404, making it look like an
-  auth problem. The correct path is `/api/v1/w/{wId}/spaces`.
-- **Response shapes aren't consistent across endpoints.** Most list
-  endpoints wrap results in an object (e.g. `{"data_sources": [...]}`),
-  but `GET .../tables` returns a bare JSON array. This SDK normalizes
-  both into consistent Python return types, but it's worth knowing if
-  you're calling the raw API directly.
-- **Dust's official OpenAPI spec has several inaccuracies**, found
-  through live testing:
-  - `agent.avatar_url` is required in practice, marked optional in the spec
-  - `editors` must be an array of email strings, not objects as the spec shows
-  - `generation_settings.reasoning_effort` is required but easy to miss
-  - Message `type` example values in the spec show `"human"`, but the
-    real API returns `"user_message"` / `"agent_message"`
+### Access restrictions (found through live testing, undocumented)
+
+Four distinct categories of API restriction were found while building
+this SDK:
+
+1. **Programmatic credit gating.** Endpoints that invoke a model
+   (`create_conversation` with an agent mention) return
+   `429 rate_limit_error` on workspaces without programmatic credits —
+   a separate pool from the regular in-app usage credits shown in the
+   UI, disabled entirely on the Free plan regardless of plan tier.
+2. **Public vs. private endpoints.** Some documented endpoints are
+   session-only and return a misleading `401 not_authenticated` even
+   with a valid API key, because they're internal to the web app
+   rather than part of the public API.
+3. **Role-based access** (confirmed on two separate endpoints:
+   `update_agent_configuration` and `export_workspace_analytics`).
+   These return `403 workspace_auth_error` ("Only admin users can
+   perform this action") for "builder"-role accounts, even on
+   harmless actions with no model invocation. Not mentioned in the
+   official docs.
+4. **User-session-only auth.** `get_feedbacks_for_conversation`
+   returns `401 user_authentication_required` with a valid API key —
+   a different error from the usual invalid-key response, suggesting
+   the endpoint may not accept Bearer API key auth at all despite
+   being documented that way.
+
+### Known bugs in `search_agents_by_name`
+
+- Global/system agents (e.g. `dust`, `helper`) are never returned by
+  this endpoint, regardless of query — confirmed with exact
+  first-letter matches that work for custom agents but not global
+  ones.
+- Matching behavior is inconsistent: a single-character query can
+  match an agent's name correctly, but the agent's exact full name as
+  the query returns zero results.
+
+### Documentation inaccuracies found
+
+- `GET /spaces` is shown at `/api/w/{wId}/spaces` (missing `/v1/`) on
+  one reference page — using that exact path returns a misleading
+  `401` instead of a 404. The correct path is `/api/v1/w/{wId}/spaces`.
+- `agent.avatar_url` is required in practice for `import_agent`,
+  marked optional in the spec.
+- `editors` must be an array of email strings, not objects as shown
+  in the import-agent spec.
+- `generation_settings.reasoning_effort` is required but easy to miss.
+- Response shapes aren't fully consistent across endpoints — most
+  list endpoints wrap results in an object (e.g.
+  `{"data_sources": [...]}`), while a few return bare arrays. This
+  SDK normalizes both into consistent Python return types.
+
+Several of these findings were reported to Dust directly; some
+(like the `tables` response shape) have already been fixed
+server-side and confirmed by their engineering team.
 
 ## Development
 
@@ -123,9 +160,11 @@ no live API calls or credits are required to run the test suite.
 
 ## Status
 
-This is an early-stage, unofficial project built to explore a gap in
-Dust's SDK coverage. 10 methods are implemented and tested; the full
-Dust API surface is 40+ endpoints. Contributions and feedback welcome.
+21 methods implemented and tested, covering agents, spaces, data
+sources, apps, skills, conversations, feedback, and analytics. The
+full Dust API surface is larger than this; some endpoints remain
+out of reach due to the access restrictions noted above. Contributions
+and feedback welcome.
 
 ## License
 
