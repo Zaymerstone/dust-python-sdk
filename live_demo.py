@@ -13,11 +13,25 @@ import os
 API_KEY = os.environ.get("DUST_API_KEY")
 WORKSPACE_ID = os.environ.get("DUST_WORKSPACE_ID")
 BASE_URL = os.environ.get("DUST_BASE_URL")
-CONVERSATION_ID = "3U61h9tf0Y"
+SPACE_ID = "vlt_gXHmJTnpgyOFCSTlCnFi"
+APP_ID = "fake-app-id"
 
-url = f"{BASE_URL}/api/v1/w/{WORKSPACE_ID}/assistant/conversations/{CONVERSATION_ID}/feedbacks"
-headers = {"Authorization": f"Bearer {API_KEY}"}
+url = f"{BASE_URL}/api/v1/w/{WORKSPACE_ID}/spaces/{SPACE_ID}/apps/{APP_ID}/runs"
+headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
+payload = {
+    "specification_hash": "fake-hash",
+    "config": {
+        "model": {
+            "provider_id": "anthropic",
+            "model_id": "claude-sonnet-5",
+            "use_cache": True,
+            "use_stream": False,
+        }
+    },
+    "inputs": [{}],
+    "blocking": True,
+}
 
-response = requests.get(url, headers=headers)
+response = requests.post(url, headers=headers, json=payload)
 print("Status code:", response.status_code)
-print(response.json())
+print(response.text)

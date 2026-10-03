@@ -1,0 +1,20 @@
+{
+  "run": {
+    "run_id": "4a2c6e8b0d",
+    "app_id": "9f1d3b5a7c",
+    "status": {
+      "run": "succeeded",
+      "build": "succeeded"
+    },
+    "results": {},
+    "specification_hash": "8c0a4e6d2f",
+    "traces": [
+      [
+        {
+          "timestamp": 1234567890,
+          "trace": {}
+        }
+      ]
+    ]
+  }
+}
