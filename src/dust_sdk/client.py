@@ -431,3 +431,25 @@ class DustClient:
             )
 
         return response.text
+
+    def get_feedbacks_for_conversation(self, conversation_id: str) -> list[dict]:
+        """
+        Returns feedback entries (thumbs up/down + comments) for a
+        conversation.
+
+        ⚠️ Live testing (2026-10-03) returned 401
+        user_authentication_required ("You must be logged in as a
+        user to access this resource") when called with a valid
+        workspace API key. Unlike other restrictions found in this
+        SDK (programmatic credits, admin-only roles), this looks like
+        the endpoint doesn't accept Bearer API key auth at all despite
+        being documented with it — possibly requiring a user session
+        token instead. Response schema here is reconstructed from
+        Dust's official docs, not live-verified.
+        """
+        url = (
+            f"{self.base_url}/api/v1/w/{self.workspace_id}"
+            f"/assistant/conversations/{conversation_id}/feedbacks"
+        )
+        response = requests.get(url, headers=self._headers())
+        return self._handle_response(response)["feedbacks"]

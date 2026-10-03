@@ -1,0 +1,15 @@
+{
+  "feedbacks": [
+    {
+      "messageId": "msg-123",
+      "agentMessageId": 456,
+      "userId": 789,
+      "thumbDirection": "up",
+      "content": "Great response!",
+      "createdAt": 1735689600000,
+      "agentConfigurationId": "dust",
+      "agentConfigurationVersion": 0,
+      "isConversationShared": false
+    }
+  ]
+}
