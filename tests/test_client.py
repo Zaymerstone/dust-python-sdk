@@ -413,3 +413,29 @@ def test_get_feedbacks_for_conversation_returns_feedbacks():
 
     assert len(feedbacks) == 1
     assert feedbacks[0]["thumbDirection"] == "up"
+    
+def test_create_app_run_returns_run_result():
+    fixture = load_fixture("app_run_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.post(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/spaces/fake-space/apps/fake-app/runs",
+            json=fixture,
+        )
+        run = client.create_app_run(
+            space_id="fake-space",
+            app_id="fake-app",
+            specification_hash="fake-hash",
+            provider_id="anthropic",
+            model_id="claude-sonnet-5",
+            inputs=[{}],
+        )
+
+    assert run["run_id"] == "4a2c6e8b0d"
+    assert run["status"]["run"] == "succeeded"

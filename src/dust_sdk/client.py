@@ -453,3 +453,46 @@ class DustClient:
         )
         response = requests.get(url, headers=self._headers())
         return self._handle_response(response)["feedbacks"]
+    
+    def create_app_run(
+        self,
+        space_id: str,
+        app_id: str,
+        specification_hash: str,
+        provider_id: str,
+        model_id: str,
+        inputs: list[dict],
+        use_cache: bool = True,
+        use_stream: bool = False,
+        blocking: bool = True,
+    ) -> dict:
+        """
+        Creates and executes a run for a Dust App.
+
+        Confirmed live (2026-10-03) that this endpoint is reachable
+        with a workspace API key — got app_not_found on a fake app_id
+        rather than a credits or role error, unlike several other
+        endpoints found this session. Full run execution wasn't
+        verified against a real app, since this dev workspace has no
+        apps configured. Response schema reconstructed from Dust's
+        official docs.
+        """
+        url = (
+            f"{self.base_url}/api/v1/w/{self.workspace_id}"
+            f"/spaces/{space_id}/apps/{app_id}/runs"
+        )
+        payload = {
+            "specification_hash": specification_hash,
+            "config": {
+                "model": {
+                    "provider_id": provider_id,
+                    "model_id": model_id,
+                    "use_cache": use_cache,
+                    "use_stream": use_stream,
+                }
+            },
+            "inputs": inputs,
+            "blocking": blocking,
+        }
+        response = requests.post(url, headers=self._headers(), json=payload)
+        return self._handle_response(response)["run"]
