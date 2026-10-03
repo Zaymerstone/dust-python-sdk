@@ -394,3 +394,22 @@ def test_export_workspace_analytics_returns_raw_data():
 
     assert "conversations" in result
     assert "2026-09-01" in result
+    
+def test_get_feedbacks_for_conversation_returns_feedbacks():
+    fixture = load_fixture("feedbacks_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/assistant/conversations/fake-cid/feedbacks",
+            json=fixture,
+        )
+        feedbacks = client.get_feedbacks_for_conversation(conversation_id="fake-cid")
+
+    assert len(feedbacks) == 1
+    assert feedbacks[0]["thumbDirection"] == "up"
