@@ -388,3 +388,46 @@ class DustClient:
         payload = {"markdown": markdown}
         response = requests.post(url, headers=self._headers(), json=payload)
         return self._handle_response(response)["markdown"]
+
+    def export_workspace_analytics(
+        self,
+        table: str,
+        start_date: str,
+        end_date: str,
+        timezone: str = "UTC",
+        format: str = "csv",
+    ) -> str:
+        """
+        Exports workspace analytics data as a raw CSV or JSON string.
+
+        ⚠️ Requires the "admin" role in the workspace. Confirmed live
+        (2026-10-03) via a 403 workspace_auth_error with a "builder"
+        role account — the same restriction found on
+        update_agent_configuration(). Two independent confirmations
+        suggest this is a systematic rule (admin-only for
+        administrative/analytics endpoints), not a one-off.
+
+        table must be one of: usage_metrics, active_users, source,
+        agents, users, skills, skill_usage, tool_usage, messages,
+        feedback.
+
+        Returns the raw response body as text, not parsed — the shape
+        depends entirely on `table` and `format`, so parsing is left
+        to the caller.
+        """
+        url = f"{self.base_url}/api/v1/w/{self.workspace_id}/analytics/export"
+        params = {
+            "table": table,
+            "startDate": start_date,
+            "endDate": end_date,
+            "timezone": timezone,
+            "format": format,
+        }
+        response = requests.get(url, headers=self._headers(), params=params)
+
+        if response.status_code != 200:
+            raise DustAPIError(
+                f"Dust API returned {response.status_code}: {response.text}"
+            )
+
+        return response.text

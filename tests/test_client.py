@@ -370,3 +370,27 @@ def test_parse_mentions_in_markdown_converts_mentions():
 
     assert ":mention[dust]" in result
     assert ":mention[lawyer]" in result
+
+def test_export_workspace_analytics_returns_raw_data():
+    with open("tests/fixtures/workspace_analytics_export.csv", encoding="utf-8") as f:
+        fixture_text = f.read()
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/analytics/export",
+            text=fixture_text,
+        )
+        result = client.export_workspace_analytics(
+            table="usage_metrics",
+            start_date="2026-09-01",
+            end_date="2026-10-03",
+        )
+
+    assert "conversations" in result
+    assert "2026-09-01" in result
