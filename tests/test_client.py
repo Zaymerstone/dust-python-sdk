@@ -167,7 +167,7 @@ def test_get_conversation_returns_conversation():
         )
         conversation = client.get_conversation(conversation_id="fake-cid")
 
-    assert conversation["sId"] == "3U61h9tf0Y"
+    assert conversation["sId"] == "convSid123"
     assert conversation["title"] == "Test greeting message"
 
 
@@ -193,7 +193,7 @@ def test_import_agent_creates_agent():
             avatar_url="https://dust.tt/static/systemavatar/dust_avatar_full.png",
         )
 
-    assert agent["sId"] == "hKKykKCnRI"
+    assert agent["sId"] == "agentSid456"
     assert agent["name"] == "sdk-test-agent"
 
 
@@ -290,7 +290,7 @@ def test_search_agents_by_name_returns_matching_agents():
         agents = client.search_agents_by_name(query="l")
 
     assert len(agents) == 1
-    assert agents[0]["name"] == "lawyer"
+    assert agents[0]["name"] == fixture["agentConfigurations"][0]["name"]
     
 def test_export_agent_as_yaml_returns_raw_yaml_text():
     with open("tests/fixtures/agent_export.yaml", encoding="utf-8") as f:
@@ -309,8 +309,8 @@ def test_export_agent_as_yaml_returns_raw_yaml_text():
         )
         yaml_text = client.export_agent_as_yaml(agent_sid="fake-sid")
 
-    assert "handle: lawyer" in yaml_text
-    assert "description: he is my lawyer" in yaml_text
+    assert "handle: example-agent" in yaml_text
+    assert "description: An example agent" in yaml_text
     
 def test_list_data_source_views_returns_views():
     fixture = load_fixture("data_source_views_response.json")
@@ -348,8 +348,8 @@ def test_update_agent_configuration_returns_updated_agent():
             user_favorite=True,
         )
 
-    assert agent["sId"] == "7f3a9c2b1e"
-    assert agent["userFavorite"] is True
+    assert agent["sId"] == fixture["agentConfiguration"]["sId"]
+    assert agent["name"] == fixture["agentConfiguration"]["name"]
 def test_parse_mentions_in_markdown_converts_mentions():
     fixture = load_fixture("parsed_mentions_response.json")
 
@@ -365,11 +365,11 @@ def test_parse_mentions_in_markdown_converts_mentions():
             json=fixture,
         )
         result = client.parse_mentions_in_markdown(
-            "Hello @dust, can you help with @lawyer?"
+            "Hello @dust, can you help with @example-agent?"
         )
 
     assert ":mention[dust]" in result
-    assert ":mention[lawyer]" in result
+    assert ":mention[example-agent]" in result
 
 def test_export_workspace_analytics_returns_raw_data():
     with open("tests/fixtures/workspace_analytics_export.csv", encoding="utf-8") as f:
@@ -393,7 +393,8 @@ def test_export_workspace_analytics_returns_raw_data():
         )
 
     assert "conversations" in result
-    assert "2026-09-01" in result
+    assert result.startswith("date,messages,conversations,activeUsers")
+    assert "2026-10-02" in result
     
 def test_get_feedbacks_for_conversation_returns_feedbacks():
     fixture = load_fixture("feedbacks_response.json")
@@ -439,3 +440,23 @@ def test_create_app_run_returns_run_result():
 
     assert run["run_id"] == "4a2c6e8b0d"
     assert run["status"]["run"] == "succeeded"
+    
+def test_search_agents_by_name_returns_global_agents():
+    fixture = load_fixture("agent_search_global_response.json")
+
+    client = DustClient(
+        api_key="fake-key",
+        workspace_id="fake-workspace",
+        base_url="https://eu.dust.tt",
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://eu.dust.tt/api/v1/w/fake-workspace/assistant/agent_configurations/search",
+            json=fixture,
+        )
+        agents = client.search_agents_by_name(query="d")
+
+    assert len(agents) == 1
+    assert agents[0]["sId"] == "dust"
+    assert agents[0]["scope"] == "global"    

@@ -1,7 +1,7 @@
 agent:
   avatar_url: https://dust.tt/static/droidavatar/Droid_Green_2.jpg
-  description: he is my lawyer
-  handle: lawyer
+  description: An example agent
+  handle: example-agent
   max_steps_per_run: 64
   scope: visible
   visualization_enabled: false

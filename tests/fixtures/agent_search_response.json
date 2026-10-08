@@ -1,23 +1,40 @@
 {
   "agentConfigurations": [
     {
-      "id": 274879186812,
-      "sId": "0lXhhdzRZQ",
+      "id": 1,
+      "agentModelId": 1,
+      "versionCreatedAt": "2026-07-10T15:07:42.844Z",
+      "sId": "agentSid123",
       "version": 3,
+      "versionAuthorId": 1,
       "model": {
         "providerId": "auto",
         "modelId": "auto",
-        "temperature": 0.7
+        "temperature": 0.7,
+        "reasoningEffort": "none"
       },
       "status": "active",
       "scope": "visible",
-      "name": "lawyer",
-      "description": "he is my lawyer",
+      "name": "example-agent",
+      "description": "An example agent",
+      "pictureUrl": "https://dust.tt/static/droidavatar/Droid_Green_2.jpg",
+      "maxStepsPerRun": 64,
+      "templateId": null,
+      "visualizationEnabled": false,
+      "requestedGroupIds": [],
+      "requestedSpaceIds": [],
+      "reinforcement": "auto",
+      "lastReinforcementAnalysisAt": null,
+      "ignoreCreditSpendThresholdAlert": false,
       "canRead": true,
       "canEdit": false,
+      "canViewContent": true,
+      "instructions": "You are a helpful assistant.",
+      "userFavorite": false,
       "tags": [],
       "skills": [],
-      "actions": []
+      "actions": [],
+      "instructionsHtml": null
     }
   ]
 }
