@@ -268,18 +268,14 @@ class DustClient:
         """
         Searches agent configurations by name.
 
-        Known limitations, confirmed via live testing (2026-10-02):
-        - Global/system agents (scope: "global", e.g. the default
-          "dust" or "helper" agents) are never returned by this
-          endpoint, regardless of the query — only custom agents
-          (scope: "visible"/"hidden") are searchable this way.
-        - The matching behavior isn't a simple substring match: a
-          single-character query can match an agent's name, but the
-          agent's exact full name as the query can return no results.
-          The underlying matching logic is unclear and appears to
-          break down on longer queries. Reported to Dust; treat
-          results from this endpoint as unreliable for anything
-          beyond a loose, best-effort lookup.
+        Returns both custom agents and global/system agents (e.g.
+        "dust", "helper"). Verified live on 2026-10-08.
+
+        Note: on 2026-10-02 this endpoint was observed to omit global
+        agents and to return nothing for an agent's exact full name.
+        Dust confirmed the global-agent omission as a bug; neither
+        behavior reproduced on 2026-10-08. If results look incomplete,
+        fall back to filtering the output of list_agents().
         """
         url = (
             f"{self.base_url}/api/v1/w/{self.workspace_id}"
@@ -344,15 +340,17 @@ class DustClient:
     ) -> dict:
         """
         Updates an existing agent configuration. All fields are
-        optional — only the ones provided are changed.
+        optional: only the ones provided are changed.
 
-        ⚠️ Requires the "admin" role in the workspace, confirmed via a
-        live 403 workspace_auth_error ("Only admin users can perform
-        this action") when attempted with a "builder" role account.
-        This restriction isn't documented in the official API spec.
-        Response schema is a reconstruction based on Dust's official
-        docs, not live-verified, since testing it live requires admin
-        access this dev account doesn't have.
+        Requires an API key with the admin scope (Admin > API Keys).
+        A key without it returns 403 workspace_auth_error. Verified
+        live on 2026-10-08 with an admin-scope key; `description`
+        was confirmed to change and be restorable.
+
+        Note: `user_favorite` is accepted (HTTP 200) but had no
+        visible effect when called with an API key. Favorites are
+        likely per-user, and an API key is not tied to a user.
+        `handle`, `instructions` and `editors` were not tested live.
         """
         url = (
             f"{self.base_url}/api/v1/w/{self.workspace_id}"
@@ -382,7 +380,7 @@ class DustClient:
         ":mention[dust]{sId=dust}"). Stateless utility — doesn't
         require an existing conversation or invoke a model. Confirmed
         live (2026-10-02) with both a global agent (@dust) and a
-        custom agent (@lawyer) in the same request.
+        custom agent (@example-agent) in the same request.
         """
         url = f"{self.base_url}/api/v1/w/{self.workspace_id}/assistant/mentions/parse"
         payload = {"markdown": markdown}
@@ -400,18 +398,15 @@ class DustClient:
         """
         Exports workspace analytics data as a raw CSV or JSON string.
 
-        ⚠️ Requires the "admin" role in the workspace. Confirmed live
-        (2026-10-03) via a 403 workspace_auth_error with a "builder"
-        role account — the same restriction found on
-        update_agent_configuration(). Two independent confirmations
-        suggest this is a systematic rule (admin-only for
-        administrative/analytics endpoints), not a one-off.
+        Requires an API key with the admin scope (Admin > API Keys);
+        a key without it returns 403 workspace_auth_error. Dates use
+        the YYYY-MM-DD format. Verified live on 2026-10-08.
 
         table must be one of: usage_metrics, active_users, source,
         agents, users, skills, skill_usage, tool_usage, messages,
         feedback.
 
-        Returns the raw response body as text, not parsed — the shape
+        Returns the raw response body as text, not parsed: the shape
         depends entirely on `table` and `format`, so parsing is left
         to the caller.
         """
@@ -437,15 +432,16 @@ class DustClient:
         Returns feedback entries (thumbs up/down + comments) for a
         conversation.
 
-        ⚠️ Live testing (2026-10-03) returned 401
-        user_authentication_required ("You must be logged in as a
-        user to access this resource") when called with a valid
-        workspace API key. Unlike other restrictions found in this
-        SDK (programmatic credits, admin-only roles), this looks like
-        the endpoint doesn't accept Bearer API key auth at all despite
-        being documented with it — possibly requiring a user session
-        token instead. Response schema here is reconstructed from
-        Dust's official docs, not live-verified.
+        Does not work with workspace API keys. Live testing
+        (2026-10-03) returned 401 user_authentication_required
+        ("You must be logged in as a user to access this resource").
+        Dust confirmed this is expected: feedback is tied to a
+        specific user, and an API key is not tied to anyone, so
+        there is currently no way to call this endpoint with a
+        workspace API key.
+
+        Response schema is reconstructed from Dust's official docs,
+        not live-verified.
         """
         url = (
             f"{self.base_url}/api/v1/w/{self.workspace_id}"
