@@ -1,5 +1,9 @@
 # dust-sdk (unofficial)
 
+[![PyPI](https://img.shields.io/pypi/v/conversational-agent-client)](https://pypi.org/project/conversational-agent-client/)
+[![Python](https://img.shields.io/pypi/pyversions/conversational-agent-client)](https://pypi.org/project/conversational-agent-client/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 An unofficial Python client for the [Dust](https://dust.tt) API.
 
 Dust ships an official [JavaScript/TypeScript SDK](https://docs.dust.tt/reference/javascript-sdk),
@@ -164,16 +168,16 @@ pip install pytest requests-mock
 pytest -v
 ```
 
-Tests run entirely against recorded fixtures (`tests/fixtures/`) —
-no live API calls or credits are required to run the test suite.
+Tests run entirely against fixtures (`tests/fixtures/`), mostly
+anonymized live responses and a few reconstructed from the official
+docs. No live API calls or credits are required to run the test suite.
 
 ## Status
 
-21 methods implemented and tested, covering agents, spaces, data
-sources, apps, skills, conversations, feedback, and analytics. The
-full Dust API surface is larger than this; some endpoints remain
-out of reach due to the access restrictions noted above. Contributions
-and feedback welcome.
+21 methods implemented, covered by 22 tests. 17 are verified against
+the live API; 4 (`list_documents`, `search_data_source`,
+`create_app_run`, `get_feedbacks_for_conversation`) are based on the
+official docs only. Contributions and feedback welcome.
 
 ## License
 
