@@ -1,0 +1,181 @@
+{
+  "id": 274897551760,
+  "created": 1793638531844,
+  "updated": 1793638534875,
+  "sId": "ConvExample",
+  "owner": {
+    "id": 274877909913,
+    "sId": "WORKSPACE_ID",
+    "name": "example-workspace",
+    "role": "user",
+    "segmentation": null,
+    "ssoEnforced": false,
+    "regionalModelsOnly": false,
+    "workOSOrganizationId": "org_EXAMPLE",
+    "whiteListedProviders": null,
+    "defaultEmbeddingProvider": null,
+    "metadata": {
+      "isBusiness": false
+    },
+    "metronomeCustomerId": "00000000-0000-0000-0000-000000000000",
+    "sharingPolicy": "all_scopes",
+    "locale": "en-US"
+  },
+  "title": "Single Word Reply",
+  "visibility": "unlisted",
+  "depth": 0,
+  "triggerId": null,
+  "content": [
+    [
+      {
+        "id": 274979956434,
+        "sId": "4Ob2dNXaPz",
+        "type": "user_message",
+        "visibility": "visible",
+        "version": 0,
+        "rank": 0,
+        "branchId": null,
+        "created": 1793638532213,
+        "user": null,
+        "content": "Reply with the single word: ok",
+        "context": {
+          "username": "sdk-user",
+          "timezone": "UTC",
+          "fullName": null,
+          "email": null,
+          "profilePictureUrl": null,
+          "origin": "api",
+          "clientSideMCPServerIds": [],
+          "lastTriggerRunAt": null,
+          "hostSelection": null
+        },
+        "reactions": [],
+        "requestedModel": null,
+        "mentions": [
+          {
+            "configurationId": "dust"
+          }
+        ],
+        "richMentions": [
+          {
+            "id": "dust",
+            "type": "agent",
+            "label": "Dust",
+            "pictureUrl": "https://dust.tt/static/systemavatar/dust_avatar_full.png",
+            "description": "Dust is your general purpose agent. It has access to all of your company data and tools available in the Company space. Dust can help you:\n- Find and analyze data across your company knowledge\n- Research topics by searching the web\n- Create content like documents, presentations, images, and dashboards",
+            "userFavorite": false,
+            "status": "approved",
+            "dismissed": false
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "id": 274979956435,
+        "agentMessageId": 274924703136,
+        "sId": "oaA2JefcyT",
+        "created": 1793638532230,
+        "completedTs": 1793638534804,
+        "type": "agent_message",
+        "visibility": "visible",
+        "version": 0,
+        "rank": 1,
+        "branchId": null,
+        "parentMessageId": "4Ob2dNXaPz",
+        "parentAgentMessageId": null,
+        "status": "succeeded",
+        "actions": [],
+        "content": "ok",
+        "chainOfThought": null,
+        "contents": [
+          {
+            "step": 0,
+            "content": {
+              "type": "text_content",
+              "value": "ok",
+              "metadata": {
+                "phase": "final_answer",
+                "region": "eu",
+                "modelId": "gpt-5.6-luna",
+                "clientId": "openai",
+                "inferenceProvider": "openai-responses"
+              }
+            }
+          }
+        ],
+        "error": null,
+        "configuration": {
+          "id": -1,
+          "agentModelId": null,
+          "versionCreatedAt": null,
+          "sId": "dust",
+          "version": 0,
+          "versionAuthorId": null,
+          "model": {
+            "providerId": "auto",
+            "modelId": "auto",
+            "temperature": 0.7,
+            "reasoningEffort": "none"
+          },
+          "status": "active",
+          "scope": "global",
+          "name": "Dust",
+          "description": "Dust is your general purpose agent. It has access to all of your company data and tools available in the Company space. Dust can help you:\n- Find and analyze data across your company knowledge\n- Research topics by searching the web\n- Create content like documents, presentations, images, and dashboards",
+          "pictureUrl": "https://dust.tt/static/systemavatar/dust_avatar_full.png",
+          "maxStepsPerRun": 64,
+          "templateId": null,
+          "visualizationEnabled": false,
+          "requestedGroupIds": [],
+          "requestedSpaceIds": [],
+          "reinforcement": "auto",
+          "lastReinforcementAnalysisAt": null,
+          "ignoreCreditSpendThresholdAlert": false,
+          "canRead": true,
+          "canEdit": false,
+          "canViewContent": true,
+          "instructions": "<instructions omitted from fixture>",
+          "userFavorite": false,
+          "tags": [],
+          "actions": [],
+          "instructionsHtml": null
+        },
+        "skipToolsValidation": false,
+        "modelInteractionDurationMs": 1474,
+        "richMentions": [],
+        "completionDurationMs": 2574,
+        "reactions": [],
+        "prunedContext": false,
+        "creditSpendCheckpointStatus": null,
+        "costCredits": 1,
+        "subAgentCostCredits": 0,
+        "resolvedModel": {
+          "providerId": "openai",
+          "modelId": "gpt-5.6-luna",
+          "reasoningEffort": "high"
+        },
+        "modelResolutionMethod": "auto",
+        "fallbackModelId": null,
+        "rawContents": [
+          {
+            "step": 0,
+            "content": "ok"
+          }
+        ]
+      }
+    ]
+  ],
+  "actionRequired": false,
+  "unread": true,
+  "lastReadMs": null,
+  "hasError": false,
+  "requestedSpaceIds": [],
+  "spaceId": null,
+  "metadata": {
+    "useFileSystem": true
+  },
+  "isRunningAgentLoop": false,
+  "isParticipant": false,
+  "requestedGroupIds": [],
+  "url": "https://app.dust.tt/w/WORKSPACE_ID/conversation/ConvExample"
+}

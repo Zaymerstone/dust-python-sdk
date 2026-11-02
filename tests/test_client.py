@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 import requests_mock
 from dust_sdk.client import DustClient, DustAPIError
 
@@ -459,4 +460,26 @@ def test_search_agents_by_name_returns_global_agents():
 
     assert len(agents) == 1
     assert agents[0]["sId"] == "dust"
-    assert agents[0]["scope"] == "global"    
+    assert agents[0]["scope"] == "global"
+    
+def test_get_last_agent_message_text_from_live_fixture():
+    path = Path(__file__).parent / "fixtures" / "conversation_agent_reply.json"
+    conversation = json.loads(path.read_text(encoding="utf-8"))
+    expected = conversation["content"][-1][-1]["content"]
+    assert DustClient.get_last_agent_message_text(conversation) == expected    
+    
+def test_create_message_posts_to_conversation(requests_mock):
+    client = DustClient(
+        api_key="test-key", workspace_id="w1", base_url="https://eu.dust.tt"
+    )
+    requests_mock.post(
+        "https://eu.dust.tt/api/v1/w/w1/assistant/conversations/c1/messages",
+        json={"message": {"sId": "m1"}, "agentMessages": []},
+    )
+
+    result = client.create_message("c1", "Hello", agent_sid="dust")
+
+    body = requests_mock.last_request.json()
+    assert body["content"] == "Hello"
+    assert body["mentions"] == [{"configurationId": "dust"}]
+    assert result["message"]["sId"] == "m1"
