@@ -55,6 +55,9 @@ class DustClient:
     ) -> dict:
         """
         Creates a conversation and sends the first message to an agent.
+        With blocking=True (the default) the call returns only after the
+        agent has finished answering, so the reply is already in the
+        returned conversation. Verified live on 2026-11-02.
         Response schema confirmed against live data on 2026-07-09
         (see NOTES.md).
         """
@@ -82,13 +85,41 @@ class DustClient:
         conversation['content'] is a 2D array content[rank][version]:
         rank = the message's position in the conversation, version =
         edit/revision at that position. We take the latest version at
-        each rank and look for the last message of type agent_message.
+        each rank and return the content of the last agent message,
+        or None if the conversation has no agent message yet.
         """
         for rank_group in reversed(conversation["content"]):
             latest_version = rank_group[-1]
             if latest_version.get("type") == "agent_message":
                 return latest_version.get("content")
         return None
+    
+    def create_message(
+        self,
+        conversation_id: str,
+        message_content: str,
+        agent_sid: str,
+        username: str = "sdk-user",
+        timezone: str = "UTC",
+    ) -> dict:
+        """
+        Posts a new message to an existing conversation, mentioning an agent.
+        Returns the raw API response. To read the agent's answer, fetch the
+        conversation with get_conversation() once the agent has finished. Verified live on 2026-11-02. The response contains the keys
+        'message' and 'agentMessages' (the official docs describe the
+        request body here instead).
+        """
+        url = (
+            f"{self.base_url}/api/v1/w/{self.workspace_id}"
+            f"/assistant/conversations/{conversation_id}/messages"
+        )
+        payload = {
+            "content": message_content,
+            "mentions": [{"configurationId": agent_sid}],
+            "context": {"timezone": timezone, "username": username},
+        }
+        response = requests.post(url, headers=self._headers(), json=payload)
+        return self._handle_response(response)
 
     def list_spaces(self) -> list[dict]:
         """Returns the list of spaces in the workspace."""
@@ -347,10 +378,12 @@ class DustClient:
         live on 2026-10-08 with an admin-scope key; `description`
         was confirmed to change and be restorable.
 
-        Note: `user_favorite` is accepted (HTTP 200) but had no
-        visible effect when called with an API key. Favorites are
-        likely per-user, and an API key is not tied to a user.
-        `handle`, `instructions` and `editors` were not tested live.
+        Note: `user_favorite` is a per-user setting, so it cannot be
+        applied with a workspace API key. Until 2026-10-14 the API
+        silently returned HTTP 200 without applying it; Dust has since
+        changed this to return a clear error (reported by Dust's
+        support team, not re-tested here). `handle`, `instructions`
+        and `editors` were not tested live.
         """
         url = (
             f"{self.base_url}/api/v1/w/{self.workspace_id}"

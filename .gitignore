@@ -20,4 +20,7 @@ dist/
 
 # IDE (на случай, если используешь VSCode/PyCharm)
 .vscode/
-.idea/
+.idea/verify_out.json
+verify_live.py
+verify_long.py
+verify_message.py

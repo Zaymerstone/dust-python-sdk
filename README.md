@@ -56,32 +56,33 @@ your first call.
 
 ## What's implemented
 
-21 methods, covering agents, spaces, data sources, apps, skills,
+22 methods, covering agents, spaces, data sources, apps, skills,
 conversations, feedback, and analytics.
 
-| Method                                | Operation             | Verified against                      |
-| ------------------------------------- | --------------------- | ------------------------------------- |
-| `list_agents()`                       | GET agent list        | ✅ Live API call                      |
-| `get_agent(sid)`                      | GET single agent      | ✅ Live API call                      |
-| `search_agents_by_name(query)`        | GET agent search      | ✅ Live API call                      |
-| `export_agent_as_yaml(sid)`           | GET agent as YAML     | ✅ Live API call                      |
-| `import_agent(...)`                   | POST create agent     | ✅ Live API call                      |
-| `update_agent_configuration(...)`     | PATCH update agent    | ✅ Live API call ⚠️ admin-scope key   |
-| `archive_agent(sid)`                  | DELETE (soft) agent   | ✅ Live API call                      |
-| `list_spaces()`                       | GET spaces            | ✅ Live API call                      |
-| `list_data_sources(space_id)`         | GET data sources      | ✅ Live API call                      |
-| `list_documents(space_id, ds_id)`     | GET documents         | 📄 Official docs                      |
-| `get_tables(space_id, ds_id)`         | GET tables            | ✅ Live API call                      |
-| `search_data_source(...)`             | GET semantic search   | 📄 Official docs                      |
-| `list_apps(space_id)`                 | GET apps in space     | ✅ Live API call                      |
-| `create_app_run(...)`                 | POST run a Dust App   | 📄 Official docs                      |
-| `list_skills()`                       | GET custom skills     | ✅ Live API call                      |
-| `list_data_source_views(space_id)`    | GET data source views | ✅ Live API call                      |
-| `create_conversation(...)`            | POST new conversation | ✅ Live API call                      |
-| `get_conversation(cid)`               | GET conversation      | ✅ Live API call                      |
-| `get_feedbacks_for_conversation(cid)` | GET feedback entries  | 📄 Official docs ⚠️ no API-key access |
-| `parse_mentions_in_markdown(text)`    | POST parse @mentions  | ✅ Live API call                      |
-| `export_workspace_analytics(...)`     | GET analytics export  | ✅ Live API call ⚠️ admin-scope key   |
+| Method                                 | Operation                    | Verified against                      |
+| -------------------------------------- | ---------------------------- | ------------------------------------- |
+| `list_agents()`                        | GET agent list               | ✅ Live API call                      |
+| `get_agent(sid)`                       | GET single agent             | ✅ Live API call                      |
+| `search_agents_by_name(query)`         | GET agent search             | ✅ Live API call                      |
+| `export_agent_as_yaml(sid)`            | GET agent as YAML            | ✅ Live API call                      |
+| `import_agent(...)`                    | POST create agent            | ✅ Live API call                      |
+| `update_agent_configuration(...)`      | PATCH update agent           | ✅ Live API call ⚠️ admin-scope key   |
+| `archive_agent(sid)`                   | DELETE (soft) agent          | ✅ Live API call                      |
+| `list_spaces()`                        | GET spaces                   | ✅ Live API call                      |
+| `list_data_sources(space_id)`          | GET data sources             | ✅ Live API call                      |
+| `list_documents(space_id, ds_id)`      | GET documents                | 📄 Official docs                      |
+| `get_tables(space_id, ds_id)`          | GET tables                   | ✅ Live API call                      |
+| `search_data_source(...)`              | GET semantic search          | 📄 Official docs                      |
+| `list_apps(space_id)`                  | GET apps in space            | ✅ Live API call                      |
+| `create_app_run(...)`                  | POST run a Dust App          | 📄 Official docs                      |
+| `list_skills()`                        | GET custom skills            | ✅ Live API call                      |
+| `list_data_source_views(space_id)`     | GET data source views        | ✅ Live API call                      |
+| `create_conversation(...)`             | POST new conversation        | ✅ Live API call                      |
+| `create_message(cid, text, agent_sid)` | POST message in conversation | ✅ Live API call                      |
+| `get_conversation(cid)`                | GET conversation             | ✅ Live API call                      |
+| `get_feedbacks_for_conversation(cid)`  | GET feedback entries         | 📄 Official docs ⚠️ no API-key access |
+| `parse_mentions_in_markdown(text)`     | POST parse @mentions         | ✅ Live API call                      |
+| `export_workspace_analytics(...)`      | GET analytics export         | ✅ Live API call ⚠️ admin-scope key   |
 
 _"Live API call" means the response schema was confirmed against a
 real request during development. "Official docs" means it's based on
@@ -99,13 +100,18 @@ Four categories of API restriction were found while building this SDK.
 Dust's support team confirmed the explanations below.
 
 1. **Programmatic credit gating.** Endpoints that invoke a model
-   (`create_conversation` with an agent mention) return
-   `429 rate_limit_error` unless the workspace has programmatic credits.
-   Programmatic calls draw only from the workspace credit pool, never
-   from a person's individual seat credits, and there is no free
-   baseline. The pool exists on the Business plan after an admin tops
-   it up (a workspace made up entirely of Free seats is still on the
-   Business plan). Without a top-up there is no programmatic model access.
+   (`create_conversation` and `create_message` with an agent mention)
+   return `429 rate_limit_error` unless two conditions hold: the
+   workspace credit pool has a balance, and the **Programmatic monthly
+   limit** (Credits > Settings > Programmatic usage) is above 0. With the
+   limit at 0 the error reads "Your workspace has reached its
+   programmatic monthly spending cap". Programmatic calls draw only from
+   the workspace credit pool, never from a person's individual seat
+   credits, and there is no free baseline. The pool exists on the
+   Business plan after an admin tops it up (a workspace made up
+   entirely of Free seats is still on the Business plan). A short call
+   cost about 1 credit when tested on 2026-11-02; each agent message
+   reports its own cost in the `costCredits` field.
 2. **Public vs. private endpoints.** Some documented endpoints are
    session-only and return a misleading `401 not_authenticated` even
    with a valid API key, because they're internal to the web app
@@ -124,10 +130,13 @@ Dust's support team confirmed the explanations below.
 
 ### Notes on specific methods
 
-- `update_agent_configuration`: `user_favorite` is accepted (HTTP 200)
-  but had no visible effect when called with an API key. Changing
-  `description` was verified live; `handle`, `instructions` and
-  `editors` were not tested live.
+- `update_agent_configuration`: `user_favorite` is a per-user setting,
+  so it cannot be applied with a workspace API key. Until 2026-10-14
+  the API silently returned HTTP 200 without applying it; Dust has
+  since changed this to return a clear error (reported by Dust's
+  support team, not re-tested here). Changing `description` was
+  verified live; `handle`, `instructions` and `editors` were not
+  tested live.
 - `export_workspace_analytics`: dates use the `YYYY-MM-DD` format. Only
   the `usage_metrics` table was verified live.
 - `search_agents_by_name`: on 2026-10-02 this endpoint omitted global
@@ -150,6 +159,9 @@ Dust's support team confirmed the explanations below.
   list endpoints wrap results in an object (e.g.
   `{"data_sources": [...]}`), while a few return bare arrays. This
   SDK normalizes both into consistent Python return types.
+- The response of `POST .../conversations/{cId}/messages` is documented
+  with the request body's fields (`content`, `mentions`, `context`), but
+  the API actually returns `message` and `agentMessages`.
 
 Several of these findings were reported to Dust directly; some
 (like the `tables` response shape) have already been fixed
@@ -174,7 +186,7 @@ docs. No live API calls or credits are required to run the test suite.
 
 ## Status
 
-21 methods implemented, covered by 22 tests. 17 are verified against
+22 methods implemented, covered by 24 tests. 18 are verified against
 the live API; 4 (`list_documents`, `search_data_source`,
 `create_app_run`, `get_feedbacks_for_conversation`) are based on the
 official docs only. Contributions and feedback welcome.
