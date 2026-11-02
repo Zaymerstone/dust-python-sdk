@@ -378,10 +378,12 @@ class DustClient:
         live on 2026-10-08 with an admin-scope key; `description`
         was confirmed to change and be restorable.
 
-        Note: `user_favorite` is accepted (HTTP 200) but had no
-        visible effect when called with an API key. Favorites are
-        likely per-user, and an API key is not tied to a user.
-        `handle`, `instructions` and `editors` were not tested live.
+        Note: `user_favorite` is a per-user setting, so it cannot be
+        applied with a workspace API key. Until 2026-10-14 the API
+        silently returned HTTP 200 without applying it; Dust has since
+        changed this to return a clear error (reported by Dust's
+        support team, not re-tested here). `handle`, `instructions`
+        and `editors` were not tested live.
         """
         url = (
             f"{self.base_url}/api/v1/w/{self.workspace_id}"

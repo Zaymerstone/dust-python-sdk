@@ -130,10 +130,13 @@ Dust's support team confirmed the explanations below.
 
 ### Notes on specific methods
 
-- `update_agent_configuration`: `user_favorite` is accepted (HTTP 200)
-  but had no visible effect when called with an API key. Changing
-  `description` was verified live; `handle`, `instructions` and
-  `editors` were not tested live.
+- `update_agent_configuration`: `user_favorite` is a per-user setting,
+  so it cannot be applied with a workspace API key. Until 2026-10-14
+  the API silently returned HTTP 200 without applying it; Dust has
+  since changed this to return a clear error (reported by Dust's
+  support team, not re-tested here). Changing `description` was
+  verified live; `handle`, `instructions` and `editors` were not
+  tested live.
 - `export_workspace_analytics`: dates use the `YYYY-MM-DD` format. Only
   the `usage_metrics` table was verified live.
 - `search_agents_by_name`: on 2026-10-02 this endpoint omitted global
